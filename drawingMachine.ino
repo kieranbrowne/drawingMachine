@@ -1,6 +1,7 @@
 /*Drawing Machine alpha
   by: Kieran Browne
-  date: April 21, 2014
+  date: 21st April 2014
+  last modified: 23rd April 2014 
 
 
   Motor A on the left
@@ -9,7 +10,7 @@
 #include <Servo.h>
 Servo servo;  
 
-float px, py; //where the arm is drawing
+float px, py; //where the system drawing
 const float MOTORSEPARATION =152.0; // motor separation (all values given in notches
 const float AX = 0.0; // motor A x coord
 const float BX = AX+MOTORSEPARATION; // motor B x coord
@@ -36,11 +37,11 @@ const byte DIRB = 13; // Direction control for motor B
 
 void setup()
 {
-  setupArdumoto(); // Set all pins as outputs
-  // find pointer location
+  setupArdumoto(); // set pins for dc motors
+  // find initial pointer location
   px = (sq(mAr)-sq(mBr)-sq(AX)+sq(BX))/(2*(BX-AX));
   py =  sqrt(sq(mAr)-sq(px-AX));
-  servo.attach(9);
+  servo.attach(9); // set pin for servo standoff
 }
 
 void loop()
@@ -54,22 +55,22 @@ void loop()
 
 void movePointerTo(float newX, float newY){
   
-  float newAradius = sqrt(sq(newY)+sq(newX-AX)); // new motor A radius
-  float newBradius = sqrt(sq(newY)+sq(newX-BX)); // new motor B radius
+  float newAradius = sqrt(sq(newY)+sq(newX-AX));
+  float newBradius = sqrt(sq(newY)+sq(newX-BX));
   
   float changeA = newAradius - mAr;
   float changeB = newBradius - mBr;
   
   
   if (changeA > 0) {
-    driveArdumoto(MOTOR_A, CW, 255); // Set motor A to CCW at max
+    driveArdumoto(MOTOR_A, CW, 255);
   }else if (changeA < 0){
-    driveArdumoto(MOTOR_A, CCW, 255); // Set motor A to CCW at max
+    driveArdumoto(MOTOR_A, CCW, 255);
   }
   if (changeB > 0) {
-    driveArdumoto(MOTOR_B, CCW, 255); // Set motor B to CCW at max
+    driveArdumoto(MOTOR_B, CCW, 255);
   }else if (changeB < 0){
-    driveArdumoto(MOTOR_B, CW, 255); // Set motor B to CW at max
+    driveArdumoto(MOTOR_B, CW, 255);
   }
   float timeA = abs(changeA)/NPM;
   float timeB = abs(changeB)/NPM;
@@ -84,26 +85,21 @@ void movePointerTo(float newX, float newY){
     delay(timeB-timeA);
     stopArdumoto(MOTOR_B);
   }
-  
   delay(500);
   
-  mAr = newAradius;
+  mAr = newAradius; //update r values
   mBr = newBradius;
 }
 
 void drawing(boolean d){
   if ((draw == false)&&(d == true)){
-    for(int pos = 10; pos < 90; pos += 1)  // goes from 0 degrees to 180 degrees 
-    {                                  // in steps of 1 degree 
-      servo.write(pos);              // tell servo to go to position in variable 'pos' 
-      delay(15);                       // waits 15ms for the servo to reach the position 
+    for(int pos = 90; pos>=10; pos-=1){                                
+      servo.write(pos); delay(15); 
     }
     draw = true;
   }else if((draw == true)&&(d == false)){
-    for(int pos = 90; pos>=10; pos-=1)     // goes from 180 degrees to 0 degrees 
-    {                                
-      servo.write(pos);              // tell servo to go to position in variable 'pos' 
-      delay(15);                       // waits 15ms for the servo to reach the position 
+    for(int pos = 10; pos < 90; pos += 1){
+      servo.write(pos); delay(15);
     } 
     draw = false;
   }
