@@ -10,7 +10,7 @@
 #include <Servo.h>
 Servo servo;  
 
-float px, py; //where the system drawing
+float px, py; // where the system is drawing
 const float MOTORSEPARATION =152.0; // motor separation (all values given in notches
 const float AX = 0.0; // motor A x coord
 const float BX = AX+MOTORSEPARATION; // motor B x coord
@@ -30,7 +30,7 @@ boolean draw = false;
 
 // Pin Assignments //
 // Don't change these! These pins are statically defined by shield layout
-const byte PWMA = 3;  // PWM control (speed) for motor A
+const byte PWMA = 10;  // PWM control (speed) for motor A
 const byte PWMB = 11; // PWM control (speed) for motor B
 const byte DIRA = 12; // Direction control for motor A
 const byte DIRB = 13; // Direction control for motor B
@@ -41,17 +41,18 @@ void setup()
   // find initial pointer location
   px = (sq(mAr)-sq(mBr)-sq(AX)+sq(BX))/(2*(BX-AX));
   py =  sqrt(sq(mAr)-sq(px-AX));
-  servo.attach(9); // set pin for servo standoff
+  servo.attach(2); // set pin for servo standoff
+  drawing(false); // dont draw until pointer is positioned
+  delay(30000);
 }
 
 void loop()
 {
+  drawing(false); // dont draw until pointer is positioned
   movePointerTo(MOTORSEPARATION/2,40);
   drawing(true);
   movePointerTo(random(50,100),random(60,90));
-  drawing(false);
 }
-
 
 void movePointerTo(float newX, float newY){
   
@@ -110,6 +111,7 @@ void drawing(boolean d){
 ///////////////////////////// 
 
 ARDUMOTO LIB
+by Jim Lindblom
 
 /////////////////////////////
 */

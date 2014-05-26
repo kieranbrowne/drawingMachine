@@ -1,2 +1,2 @@
 A very simple, two motor drawing machine.
-
+This repo contains an arduino sketch for controlling an L298N and a processing sketch for testing your code in advance.
