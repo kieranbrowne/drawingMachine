@@ -8,7 +8,7 @@
   Motor B on the right
 */
 #include <Servo.h>
-Servo servo;  
+Servo servo;
 
 float px, py; // where the system is drawing
 const float MOTORSEPARATION =152.0; // motor separation (all values given in notches
@@ -30,10 +30,20 @@ boolean draw = false;
 
 // Pin Assignments //
 // Don't change these! These pins are statically defined by shield layout
-const byte PWMA = 10;  // PWM control (speed) for motor A
-const byte PWMB = 11; // PWM control (speed) for motor B
-const byte DIRA = 12; // Direction control for motor A
-const byte DIRB = 13; // Direction control for motor B
+const byte PWMA = 11;  // PWM control (speed) for motor A
+const byte PWMB = 10; // PWM control (speed) for motor B
+const byte DIRA = 13; // Direction control for motor A
+const byte DIRB = 12; // Direction control for motor B
+
+// type
+int tt = 48;
+int tm = 44;
+int tb = 40;
+int st;
+
+//dir
+byte adir;
+byte bdir;
 
 void setup()
 {
@@ -48,10 +58,28 @@ void setup()
 
 void loop()
 {
+  // E
+  st = 12;
   drawing(false); // dont draw until pointer is positioned
-  movePointerTo(MOTORSEPARATION/2,40);
+  movePointerTo(st,tt);
   drawing(true);
-  movePointerTo(random(50,100),random(60,90));
+  movePointerTo(st,tb);
+  movePointerTo(st+6,tb);
+  drawing(false);
+  movePointerTo(st,tm);
+  drawing(true);
+  movePointerTo(st+5,tm);
+  drawing(false);
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st+6,tt);
+  // L
+  st = 18;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st,tb);
+  movePointerTo(st+6,tb);
 }
 
 void movePointerTo(float newX, float newY){
@@ -62,35 +90,31 @@ void movePointerTo(float newX, float newY){
   float changeA = newAradius - mAr;
   float changeB = newBradius - mBr;
   
+  pulse(changeA,changeB); 
   
-  if (changeA > 0) {
-    driveArdumoto(MOTOR_A, CW, 255);
-  }else if (changeA < 0){
-    driveArdumoto(MOTOR_A, CCW, 255);
-  }
-  if (changeB > 0) {
-    driveArdumoto(MOTOR_B, CCW, 255);
-  }else if (changeB < 0){
-    driveArdumoto(MOTOR_B, CW, 255);
-  }
-  float timeA = abs(changeA)/NPM;
-  float timeB = abs(changeB)/NPM;
-  if (timeA >= timeB){
-    delay(timeB);
-    stopArdumoto(MOTOR_B);
-    delay(timeA-timeB);
-    stopArdumoto(MOTOR_A);
-  }else{
-    delay(timeA);
-    stopArdumoto(MOTOR_A);
-    delay(timeB-timeA);
-    stopArdumoto(MOTOR_B);
-  }
   delay(500);
   
   mAr = newAradius; //update r values
   mBr = newBradius;
 }
+
+void pulse(float changeA, float changeB){
+  if (changeA > 0) adir = 0; else adir = 1;
+  if (changeB > 0) bdir = 0; else bdir = 1;
+  for (int i=0 ; i<max(abs(changeA),abs(changeB)); i++){
+        if(abs(changeA)>=i) driveArdumoto(MOTOR_A, adir, 255);
+        delay(20);
+        stopArdumoto(MOTOR_A);
+        delay(20);
+        if(abs(changeB)>=i) driveArdumoto(MOTOR_B, bdir, 255);
+        delay(20);
+        stopArdumoto(MOTOR_B);
+        delay(20);
+  }
+}
+      
+        
+    
 
 void drawing(boolean d){
   if ((draw == false)&&(d == true)){
