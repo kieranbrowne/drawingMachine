@@ -36,9 +36,9 @@ const byte DIRA = 13; // Direction control for motor A
 const byte DIRB = 12; // Direction control for motor B
 
 // type
-int tt = 48;
+int tt = 40;
 int tm = 44;
-int tb = 40;
+int tb = 50;
 int st;
 
 //dir
@@ -64,15 +64,15 @@ void loop()
   movePointerTo(st,tt);
   drawing(true);
   movePointerTo(st,tb);
-  movePointerTo(st+6,tb);
+  movePointerTo(st+10,tb);
   drawing(false);
   movePointerTo(st,tm);
   drawing(true);
-  movePointerTo(st+5,tm);
+  movePointerTo(st+8,tm);
   drawing(false);
   movePointerTo(st,tt);
   drawing(true);
-  movePointerTo(st+6,tt);
+  movePointerTo(st+10,tt);
   // L
   st = 18;
   drawing(false); // dont draw until pointer is positioned
@@ -103,13 +103,13 @@ void pulse(float changeA, float changeB){
   if (changeB > 0) bdir = 0; else bdir = 1;
   for (int i=0 ; i<max(abs(changeA),abs(changeB)); i++){
         if(abs(changeA)>=i) driveArdumoto(MOTOR_A, adir, 255);
-        delay(20);
+        delay(10);
         stopArdumoto(MOTOR_A);
-        delay(20);
+        delay(10);
         if(abs(changeB)>=i) driveArdumoto(MOTOR_B, bdir, 255);
-        delay(20);
+        delay(10);
         stopArdumoto(MOTOR_B);
-        delay(20);
+        delay(10);
   }
 }
       
