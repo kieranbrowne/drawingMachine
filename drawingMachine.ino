@@ -45,6 +45,10 @@ int st;
 byte adir;
 byte bdir;
 
+// potential fix to the height loss problem
+int pulselength = 10;
+int offset = 2; // it is likely that if steppers were used this would not be necessary
+
 void setup()
 {
   setupArdumoto(); // set pins for dc motors
@@ -59,7 +63,7 @@ void setup()
 void loop()
 {
   // E
-  st = 12;
+  st = 18;
   drawing(false); // dont draw until pointer is positioned
   movePointerTo(st,tt);
   drawing(true);
@@ -73,13 +77,78 @@ void loop()
   movePointerTo(st,tt);
   drawing(true);
   movePointerTo(st+10,tt);
+  // V
+  st += 12;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st+4,tb);
+  movePointerTo(st+8,tt);
+  drawing(false);
+  // O
+  st +=12;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st,tb);
+  movePointerTo(st+8,tb);
+  movePointerTo(st+8,tt);
+  movePointerTo(st,tt);
+  drawing(false);
   // L
-  st = 18;
+  st +=14;
   drawing(false); // dont draw until pointer is positioned
   movePointerTo(st,tt);
   drawing(true);
   movePointerTo(st,tb);
   movePointerTo(st+6,tb);
+  drawing(false);
+  // U
+  st +=12;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st,tb);
+  movePointerTo(st+6,tb);
+  movePointerTo(st+6,tt);
+  drawing(false);
+  // T
+  st +=12;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st+8,tt);
+  drawing(false);
+  movePointerTo(st+4,tt);
+  drawing(true);
+  movePointerTo(st+4,tb);
+  drawing(false);
+  // I
+  st +=10;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st,tb);
+  drawing(false);
+  // O
+  st +=6;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tt);
+  drawing(true);
+  movePointerTo(st,tb);
+  movePointerTo(st+8,tb);
+  movePointerTo(st+8,tt);
+  movePointerTo(st,tt);
+  drawing(false);
+  // N
+  st +=14;
+  drawing(false); // dont draw until pointer is positioned
+  movePointerTo(st,tb);
+  drawing(true);
+  movePointerTo(st,tt);
+  movePointerTo(st+8,tb);
+  movePointerTo(st+8,tt);
+  drawing(false);
 }
 
 void movePointerTo(float newX, float newY){
@@ -99,15 +168,16 @@ void movePointerTo(float newX, float newY){
 }
 
 void pulse(float changeA, float changeB){
-  if (changeA > 0) adir = 0; else adir = 1;
-  if (changeB > 0) bdir = 0; else bdir = 1;
+  int apow=pulselength; int bpow=pulselength;
+  if (changeA > 0) adir = 0; else {adir = 1; apow+=offset;}
+  if (changeB > 0) {bdir = 0; bpow +=0;} else bdir = 1;
   for (int i=0 ; i<max(abs(changeA),abs(changeB)); i++){
         if(abs(changeA)>=i) driveArdumoto(MOTOR_A, adir, 255);
-        delay(10);
+        delay(apow);
         stopArdumoto(MOTOR_A);
         delay(10);
         if(abs(changeB)>=i) driveArdumoto(MOTOR_B, bdir, 255);
-        delay(10);
+        delay(bpow);
         stopArdumoto(MOTOR_B);
         delay(10);
   }
