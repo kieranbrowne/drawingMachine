@@ -1,0 +1,7 @@
+#gitignore
+*.~
+*.bak
+bin/
+obj/
+Makefile
+config.make
