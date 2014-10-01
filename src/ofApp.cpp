@@ -68,8 +68,24 @@ void ofApp::setupArduino(const int & version) {
 }
 
 //--------------------------------------------------------------
+float ofApp::getCurrentX(){
+    float x,y;
+    x = (pow(MASteps,2)-pow(MBSteps,2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
+    y =  sqrt(pow(MBSteps/(SPN*8),2)-pow(x+BX,2));
+    cout << "Current X is " << ofToString(x) <<endl;
+    return x;
+}
+//--------------------------------------------------------------
+float ofApp::getCurrentY(){
+    float x,y;
+    x = (pow(MASteps,2)-pow(MBSteps,2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
+    y =  sqrt(pow(MASteps/(SPN*8),2)-pow(x-AX,2));
+    cout << "Current Y is " << ofToString(y) <<endl;
+    return y;
+}
+//--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
-    ofSleepMillis(1000);
+    ofSleepMillis(50);
 
     
     int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*(SPN*n));
@@ -109,6 +125,25 @@ void ofApp::movePointerTo(float newX, float newY){
 }
 
 // --------------------------------------------------
+void ofApp::straightLineTo(float newX, float newY){
+    ofVec2f start(getCurrentX(),getCurrentY());
+    ofVec2f pos(getCurrentX(),getCurrentY());
+    ofVec2f end(newX,newY);
+    float dist = start.distance(end);
+    cout << "Distance from current pos to new co-ords is " << ofToString(dist) << endl;
+    float stepSize = 0.1/dist;
+    for(float i=stepSize; i<=1; i+=stepSize){
+        if(i>1) i=1;
+        pos.interpolate(end, i);
+        movePointerTo(pos.x,pos.y);
+        dist = pos.distance(end);
+        cout << ofToString(dist) << endl;
+        pos.set(start.x,start.y);
+    }
+}
+
+        
+// --------------------------------------------------
 void ofApp::drawing(bool d){
  //   if(d) motorA.sendServo(10,10,false);
  //   if(!d) motorA.sendServo(10,80,false);
@@ -129,17 +164,21 @@ void ofApp::updateArduino(){
         motorB.sendDigital(9, ARD_HIGH);
 
         // DRAWING INSTRUCTIONS
-        float x = 50;
-        float y = 50;
-        for (int i=0; i<=10000; i++){
-          movePointerTo(x,y);
+        //float x,y;
+        //x = getCurrentX();
+        //y = getCurrentY();
+        float newX = 50;
+        float newY = 50;
+        for (int i=0; i<=100; i++){
+          straightLineTo(newX,newY);
 
-          x += ofRandom(-0.5,0.5);
-          y += ofRandom(-0.5,0.5);
-          if(x>60) x-=0.5;
-          if(x<50) x+=0.5;
-          if(y>60) y-=0.5;
-          if(y<50) y+=0.5;
+          //x = getCurrentX();
+          newX += ofRandom(-5,5);
+          newY += ofRandom(-5,5);
+          if(newX>60) newX-=5;
+          if(newX<50) newX+=5;
+          if(newY>60) newY-=5;
+          if(newY<50) newY+=5;
         }
 	}
 }
