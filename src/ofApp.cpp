@@ -27,8 +27,8 @@ void ofApp::setup(){
      * each motor is 100 notches from the pen at the start
      * there are 100 steps to a full notch turn
      */
-    MASteps = 1250*n;
-    MBSteps = 1250*n;
+    MASteps = 1250*n; // with these settings the pointer
+    MBSteps = 1250*n; // will start at x=76, y=65.
 
 	motorA.connect("/dev/ttyACM0", 57600);
 	motorB.connect("/dev/ttyACM1", 57600);
@@ -69,30 +69,32 @@ void ofApp::setupArduino(const int & version) {
 
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
-    float x,y;
-    x = (pow(MASteps,2)-pow(MBSteps,2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
-    y =  sqrt(pow(MBSteps/(SPN*8),2)-pow(x+BX,2));
+    float x;
+    x = (pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
     cout << "Current X is " << ofToString(x) <<endl;
     return x;
 }
 //--------------------------------------------------------------
 float ofApp::getCurrentY(){
     float x,y;
-    x = (pow(MASteps,2)-pow(MBSteps,2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
-    y =  sqrt(pow(MASteps/(SPN*8),2)-pow(x-AX,2));
+    x = (pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
+    y =  pow(MASteps/(SPN*8),2)-pow(x-AX,2);
+    if(y<=0){cout << "Y less than 0!!!!" << endl;}else{y=sqrt(y);}
     cout << "Current Y is " << ofToString(y) <<endl;
     return y;
 }
 //--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
-    ofSleepMillis(50);
+    ofSleepMillis(30);
 
-    
     int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*(SPN*n));
     int newBsteps = floor(sqrt(pow(newY,2)+pow(newX-BX,2))*(SPN*n));
     
     int changeA = newAsteps - MASteps;
     int changeB = newBsteps - MBSteps;
+
+//    cout << "motor A changing " << ofToString(changeA) << " steps." << endl;
+//    cout << "motor B changing " << ofToString(changeB) << " steps." << endl;
 
     if(changeA > 0){
         motorA.sendDigital(dirPin, ARD_HIGH); // CCW
@@ -100,7 +102,7 @@ void ofApp::movePointerTo(float newX, float newY){
         motorA.sendDigital(dirPin, ARD_LOW);  // CW
     }
 
-    for(int i=0; i<abs(changeA); i++){
+    for(int i=0; i<=abs(changeA); i++){
         motorA.sendDigital(stepPin,ARD_HIGH);
         ofSleepMillis(3);
         motorA.sendDigital(stepPin,ARD_LOW);
@@ -112,7 +114,7 @@ void ofApp::movePointerTo(float newX, float newY){
     }else if(changeB < 0){
         motorB.sendDigital(dirPin, ARD_LOW);  // CW
     }
-    for(int i=0; i<abs(changeB); i++){
+    for(int i=0; i<=abs(changeB); i++){
         motorB.sendDigital(stepPin,ARD_HIGH);
         ofSleepMillis(3);
         motorB.sendDigital(stepPin,ARD_LOW);
@@ -136,8 +138,8 @@ void ofApp::straightLineTo(float newX, float newY){
         if(i>1) i=1;
         pos.interpolate(end, i);
         movePointerTo(pos.x,pos.y);
-        dist = pos.distance(end);
-        cout << ofToString(dist) << endl;
+        //dist = pos.distance(end);
+//        cout << ofToString(dist) << endl;
         pos.set(start.x,start.y);
     }
 }
@@ -179,6 +181,10 @@ void ofApp::updateArduino(){
           if(newX<50) newX+=5;
           if(newY>60) newY-=5;
           if(newY<50) newY+=5;
+          cout << "new target position is x:" << ofToString(newX) << " y:" << ofToString(newY) << endl;
+          cout << "Pointer is " << ofToString(MASteps) <<" from motorA." <<endl;
+          cout << "Pointer is " << ofToString(MBSteps) <<" from motorB." <<endl;
+
         }
 	}
 }
