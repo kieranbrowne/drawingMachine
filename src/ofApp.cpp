@@ -10,8 +10,8 @@ void ofApp::setup(){
 
 	ofBackground(40,40,40);
     
-	font.loadFont("franklinGothic.otf", 20);
-    smallFont.loadFont("franklinGothic.otf", 14);
+	font.loadFont("franklinGothic.otf", 12);
+    smallFont.loadFont("franklinGothic.otf", 10);
 
     dirPin = 7;
     stepPin = 6;
@@ -50,38 +50,22 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::setupArduino(const int & version) {
 	
-	// remove listener because we don't need it anymore
 	ofRemoveListener(motorA.EInitialized, this, &ofApp::setMicroSteps);
 	ofRemoveListener(motorB.EInitialized, this, &ofApp::setupArduino);
     
-    // it is now safe to send commands to the Arduino
     bSetupArduino = true;
-    
-
-    // set pin D13 as digital output
-	motorA.sendDigitalPinMode(13, ARD_OUTPUT);
-	motorB.sendDigitalPinMode(13, ARD_OUTPUT);
 
     // draw on/off servo
-//    motorA.sendServoAttach(10);
+//     motorA.sendServoAttach(10);
 
 }
 
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
-    float x;
-    x = (pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
-    cout << "Current X is " << ofToString(x) <<endl;
-    return x;
+    return ((pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX)));
 }
-//--------------------------------------------------------------
 float ofApp::getCurrentY(){
-    float x,y;
-    x = (pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX));
-    y =  pow(MASteps/(SPN*8),2)-pow(x-AX,2);
-    if(y<=0){cout << "Y less than 0!!!!" << endl;}else{y=sqrt(y);}
-    cout << "Current Y is " << ofToString(y) <<endl;
-    return y;
+    return sqrt(pow(MASteps/(SPN*n),2)-pow(getCurrentX()-AX,2));
 }
 //--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
@@ -92,9 +76,6 @@ void ofApp::movePointerTo(float newX, float newY){
     
     int changeA = newAsteps - MASteps;
     int changeB = newBsteps - MBSteps;
-
-//    cout << "motor A changing " << ofToString(changeA) << " steps." << endl;
-//    cout << "motor B changing " << ofToString(changeB) << " steps." << endl;
 
     if(changeA > 0){
         motorA.sendDigital(dirPin, ARD_HIGH); // CCW
@@ -132,18 +113,24 @@ void ofApp::straightLineTo(float newX, float newY){
     ofVec2f pos(getCurrentX(),getCurrentY());
     ofVec2f end(newX,newY);
     float dist = start.distance(end);
-    cout << "Distance from current pos to new co-ords is " << ofToString(dist) << endl;
+    updateDistGraph(floor(dist));
+    cout << " | d:" << ofToString(dist) << endl;
     float stepSize = 0.1/dist;
     for(float i=stepSize; i<=1; i+=stepSize){
         if(i>1) i=1;
         pos.interpolate(end, i);
         movePointerTo(pos.x,pos.y);
-        //dist = pos.distance(end);
-//        cout << ofToString(dist) << endl;
         pos.set(start.x,start.y);
     }
 }
 
+// --------------------------------------------------
+void ofApp::updateDistGraph(int n){
+    for(int i=10;i>0;i--){
+        distGraph[i] = distGraph[i-1];
+    }
+    distGraph[0] = n;
+}
         
 // --------------------------------------------------
 void ofApp::drawing(bool d){
@@ -157,7 +144,6 @@ void ofApp::updateArduino(){
 	motorA.update();
 	motorB.update();
 	
-	// do not send anything until the arduino has been set up
 	if (bSetupArduino) {
         // set steps to eigth    
         motorA.sendDigital(8, ARD_HIGH);
@@ -166,25 +152,21 @@ void ofApp::updateArduino(){
         motorB.sendDigital(9, ARD_HIGH);
 
         // DRAWING INSTRUCTIONS
-        //float x,y;
-        //x = getCurrentX();
-        //y = getCurrentY();
-        float newX = 50;
-        float newY = 50;
-        for (int i=0; i<=100; i++){
+        float newX = getCurrentX();
+        float newY = getCurrentY();
+        for (int i=0; i<=1; i++){
           straightLineTo(newX,newY);
 
-          //x = getCurrentX();
           newX += ofRandom(-5,5);
           newY += ofRandom(-5,5);
-          if(newX>60) newX-=5;
-          if(newX<50) newX+=5;
-          if(newY>60) newY-=5;
-          if(newY<50) newY+=5;
-          cout << "new target position is x:" << ofToString(newX) << " y:" << ofToString(newY) << endl;
-          cout << "Pointer is " << ofToString(MASteps) <<" from motorA." <<endl;
-          cout << "Pointer is " << ofToString(MBSteps) <<" from motorB." <<endl;
+          if(newX>86) newX-=5;
+          if(newX<76) newX+=5;
+          if(newY>75) newY-=5;
+          if(newY<65) newY+=5;
 
+          cout << "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
+          << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
+          << " >> " << "x:" << ofToString(newX) << " y:" << ofToString(newY);
         }
 	}
 }
@@ -192,27 +174,44 @@ void ofApp::updateArduino(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofEnableAlphaBlending();
+    int b = 50; // buffer
     ofFill();
-    ofSetColor(0, 0, 0, 127);
-    ofRect(510, 15, 275, 150);
-    ofNoFill();
-    ofSetColor(255,255,255);
-    ofRect(510, 15, 275, 150);
-    ofDisableAlphaBlending();
+    ofSetColor(20, 20, 20);
+    ofRect(b*2 + MSEP*2, 0,350, ofGetWindowHeight());
     
-    ofSetColor(255, 255, 255);
+    ofNoFill();
+    ofSetColor(200, 200, 200);
+    ofRect(b,b,MSEP*2,400);
+    ofEllipse(b+getCurrentX()*2,b+getCurrentY()*2,10,10);
+    
+    
 	if (!bSetupArduino){
-		font.drawString("arduino not ready...\n", 515, 40);
+        ofSetColor(40, 40, 40);
 	} else {
-		font.drawString("\nsending pwm: " + ofToString((int)(128 + 128 * sin(ofGetElapsedTimef()))), 515, 40);
-        
-        ofSetColor(64, 64, 64);
-        smallFont.drawString("If a servo is attached, use the left arrow key to rotate " 
-                             "\ncounterclockwise and the right arrow key to rotate clockwise.", 200, 550);
-        ofSetColor(255, 255, 255);
+        ofSetColor(164, 164, 255);
+    }
+    //Panel
+    font.drawString("Direction",b*3 + MSEP*2 , b);
+    smallFont.drawString("Absolute",b*3 + MSEP*2 , b+15);
+    smallFont.drawString("Relative",125+ b*3 + MSEP*2 , b+15);
+    ofEllipse(62.5+b*3 +MSEP*2, b*2 +15, 125,125);
+    ofEllipse(187.5+b*3 +MSEP*2, b*2 +15, 125,125);
+    font.drawString("Distance",b*3 + MSEP*2 , b*4);
+    ofBeginShape();
+    for(int i=0;i<10;i++){
+        ofVertex(b*3 +MSEP*2 +i*25,b*6 -distGraph[i]*5);
+    }
+    ofEndShape();
+    
+    //graph    
+    ofSetColor(164, 164, 255);
+    smallFont.drawString(ofToString(MASteps,5,'0'), b, b-2);
+    smallFont.drawString(ofToString(MBSteps,5,'0'), 9+MSEP*2, b-2);
+    smallFont.drawString("("+ofToString(getCurrentX(),1)+","+
+            ofToString(getCurrentY(),1)+")", b+5+getCurrentX()*2,b+getCurrentY()*2);
+    ofSetColor(255, 255, 255);
 
-	}
+	
 }
 
 //--------------------------------------------------------------

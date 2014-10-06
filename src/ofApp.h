@@ -39,6 +39,8 @@ public:
     float BX;
     int   MASteps; // number of steps away from motor
     int   MBSteps;
+
+    int distGraph [10] = {};
     
 private:
     
@@ -46,6 +48,7 @@ private:
     float getCurrentY();
     void movePointerTo(float newX, float newY);
     void straightLineTo(float newX, float newY);
+    void updateDistGraph(int n);
     void drawing(bool d);
     void setMicroSteps(const int & version);
     void setupArduino(const int & version);
