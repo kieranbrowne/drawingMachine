@@ -35,8 +35,9 @@ void ofApp::setup(){
 	
 	ofAddListener(motorA.EInitialized, this, &ofApp::setMicroSteps);
 	ofAddListener(motorB.EInitialized, this, &ofApp::setupArduino);
-	bSetupArduino	= false;	// flag so we setup arduino when its ready, you don't need to touch this :)
+	bSetupArduino = false;
 }
+//--------------------------------------------------------------
 void ofApp::setMicroSteps(const int & version){
     // set required stepper pins to output 
     for(int i=6; i<=9; i++) motorA.sendDigitalPinMode(i, ARD_OUTPUT);
@@ -59,11 +60,11 @@ void ofApp::setupArduino(const int & version) {
 //     motorA.sendServoAttach(10);
 
 }
-
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
     return ((pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX)));
 }
+//--------------------------------------------------------------
 float ofApp::getCurrentY(){
     return sqrt(pow(MASteps/(SPN*n),2)-pow(getCurrentX()-AX,2));
 }
@@ -154,20 +155,19 @@ void ofApp::updateArduino(){
         // DRAWING INSTRUCTIONS
         float newX = getCurrentX();
         float newY = getCurrentY();
-        for (int i=0; i<=1; i++){
-          straightLineTo(newX,newY);
+        newX += ofRandom(-5,5);
+        newY += ofRandom(-5,5);
 
-          newX += ofRandom(-5,5);
-          newY += ofRandom(-5,5);
-          if(newX>86) newX-=5;
-          if(newX<76) newX+=5;
-          if(newY>75) newY-=5;
-          if(newY<65) newY+=5;
+        if(newX>86) newX-=5;
+        if(newX<76) newX+=5;
+        if(newY>75) newY-=5;
+        if(newY<65) newY+=5;
 
-          cout << "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
-          << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
-          << " >> " << "x:" << ofToString(newX) << " y:" << ofToString(newY);
-        }
+        straightLineTo(newX,newY);
+
+        cout << "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
+        << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
+        << " >> " << "x:" << ofToString(newX) << " y:" << ofToString(newY);
 	}
 }
 
@@ -198,8 +198,8 @@ void ofApp::draw(){
     ofEllipse(187.5+b*3 +MSEP*2, b*2 +15, 125,125);
     font.drawString("Distance",b*3 + MSEP*2 , b*4);
     ofBeginShape();
-    for(int i=0;i<10;i++){
-        ofVertex(b*3 +MSEP*2 +i*25,b*6 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,60));
+    for(int i=0;i<=10;i++){
+        ofVertex(b*3 +MSEP*2 +i*25,b*5 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,30));
     }
     ofEndShape();
     
@@ -223,7 +223,7 @@ float ofApp::maxValueIn(float array[]){
     return x;
 }
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){
+void ofApp::keyPressed(int key){
 
 }
 
