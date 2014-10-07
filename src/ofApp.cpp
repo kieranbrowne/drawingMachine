@@ -199,7 +199,7 @@ void ofApp::draw(){
     font.drawString("Distance",b*3 + MSEP*2 , b*4);
     ofBeginShape();
     for(int i=0;i<10;i++){
-        ofVertex(b*3 +MSEP*2 +i*25,b*6 -distGraph[i]*5);
+        ofVertex(b*3 +MSEP*2 +i*25,b*6 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,60));
     }
     ofEndShape();
     
@@ -214,6 +214,14 @@ void ofApp::draw(){
 	
 }
 
+//--------------------------------------------------------------
+float ofApp::maxValueIn(float array[]){
+    float x = array[0];
+    for(int i=0;i< sizeof array;i++){
+        if(array[i]>x) x = array[i];
+    }
+    return x;
+}
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){
 

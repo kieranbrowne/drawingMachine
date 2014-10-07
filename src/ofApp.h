@@ -40,12 +40,13 @@ public:
     int   MASteps; // number of steps away from motor
     int   MBSteps;
 
-    int distGraph [10] = {};
+    float distGraph[10] = {};
     
 private:
     
     float getCurrentX();
     float getCurrentY();
+    float maxValueIn(float array[]);
     void movePointerTo(float newX, float newY);
     void straightLineTo(float newX, float newY);
     void updateDistGraph(int n);
