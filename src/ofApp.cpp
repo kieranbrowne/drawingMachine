@@ -4,6 +4,7 @@
 void ofApp::setup(){
 
     n = 8; // divisions per step
+    count = 0; //instructions counter
 
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
@@ -79,9 +80,9 @@ void ofApp::movePointerTo(float newX, float newY){
     int changeB = newBsteps - MBSteps;
 
     if(changeA > 0){
-        motorA.sendDigital(dirPin, ARD_HIGH); // CCW
+        motorA.sendDigital(dirPin, ARD_HIGH);  // CW
     }else if(changeA < 0){
-        motorA.sendDigital(dirPin, ARD_LOW);  // CW
+        motorA.sendDigital(dirPin, ARD_LOW); // CCW
     }
 
     for(int i=0; i<=abs(changeA); i++){
@@ -92,9 +93,9 @@ void ofApp::movePointerTo(float newX, float newY){
     }
 
     if(changeB > 0){
-        motorB.sendDigital(dirPin, ARD_HIGH); // CCW
+        motorB.sendDigital(dirPin, ARD_LOW);  // CCW
     }else if(changeB < 0){
-        motorB.sendDigital(dirPin, ARD_LOW);  // CW
+        motorB.sendDigital(dirPin, ARD_HIGH); // CW
     }
     for(int i=0; i<=abs(changeB); i++){
         motorB.sendDigital(stepPin,ARD_HIGH);
@@ -108,7 +109,7 @@ void ofApp::movePointerTo(float newX, float newY){
 
 }
 
-// --------------------------------------------------
+//--------------------------------------------------------------
 void ofApp::straightLineTo(float newX, float newY){
     ofVec2f start(getCurrentX(),getCurrentY());
     ofVec2f pos(getCurrentX(),getCurrentY());
@@ -125,7 +126,7 @@ void ofApp::straightLineTo(float newX, float newY){
     }
 }
 
-// --------------------------------------------------
+//--------------------------------------------------------------
 void ofApp::updateDistGraph(int n){
     for(int i=10;i>0;i--){
         distGraph[i] = distGraph[i-1];
@@ -133,7 +134,7 @@ void ofApp::updateDistGraph(int n){
     distGraph[0] = n;
 }
         
-// --------------------------------------------------
+//--------------------------------------------------------------
 void ofApp::drawing(bool d){
  //   if(d) motorA.sendServo(10,10,false);
  //   if(!d) motorA.sendServo(10,80,false);
@@ -153,22 +154,24 @@ void ofApp::updateArduino(){
         motorB.sendDigital(9, ARD_HIGH);
 
         // DRAWING INSTRUCTIONS
-        float newX = getCurrentX();
-        float newY = getCurrentY();
-        newX += ofRandom(-5,5);
-        newY += ofRandom(-5,5);
+        float nx;
+        float ny;
 
-        if(newX>86) newX-=5;
-        if(newX<76) newX+=5;
-        if(newY>75) newY-=5;
-        if(newY<65) newY+=5;
+        cout << endl << "dx:";
+        cin >> nx;
+        cout << endl << "dy:";
+        cin >> ny;
 
-        straightLineTo(newX,newY);
+        nx += getCurrentX();
+        ny += getCurrentY();
+
+        straightLineTo(nx,ny);
 
         cout << "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
         << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
-        << " >> " << "x:" << ofToString(newX) << " y:" << ofToString(newY);
+        << " >> " << "x:" << ofToString(nx) << " y:" << ofToString(ny);
 	}
+    count++;
 }
 
 //--------------------------------------------------------------
@@ -191,18 +194,18 @@ void ofApp::draw(){
         ofSetColor(164, 164, 255);
     }
     //Panel
-    font.drawString("Direction",b*3 + MSEP*2 , b);
-    smallFont.drawString("Absolute",b*3 + MSEP*2 , b+15);
-    smallFont.drawString("Relative",125+ b*3 + MSEP*2 , b+15);
-    ofEllipse(62.5+b*3 +MSEP*2, b*2 +15, 125,125);
-    ofEllipse(187.5+b*3 +MSEP*2, b*2 +15, 125,125);
-    font.drawString("Distance",b*3 + MSEP*2 , b*4);
+    font.drawString("Distance",b*3 + MSEP*2 , b);
     ofBeginShape();
     for(int i=0;i<=10;i++){
-        ofVertex(b*3 +MSEP*2 +i*25,b*5 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,30));
+        ofVertex(b*3 +MSEP*2 +i*25,b*2 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,30));
     }
     ofEndShape();
-    
+    font.drawString("Direction",b*3 + MSEP*2 , b*3);
+    smallFont.drawString("Absolute",b*3 + MSEP*2 , b*3+15);
+    smallFont.drawString("Relative",125+ b*3 + MSEP*2 , b*3+15);
+    ofEllipse(62.5+b*3 +MSEP*2, b*4 +15, 125,125);
+    ofEllipse(187.5+b*3 +MSEP*2, b*4 +15, 125,125);
+   
     //graph    
     ofSetColor(164, 164, 255);
     smallFont.drawString(ofToString(MASteps,5,'0'), b, b-2);

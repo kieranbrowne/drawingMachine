@@ -33,6 +33,7 @@ public:
     float  SPN; // steps per notch
 
     int n; // step divider (as in "8" for eighth steps)
+    int count;
 
     float MSEP; // distance in notches between motors
     float AX; // motor co-ords
@@ -40,6 +41,9 @@ public:
     int   MASteps; // number of steps away from motor
     int   MBSteps;
 
+    float plan[100][2] = {
+        {6,13},{6,12},{8,12}
+    };
     float distGraph[10] = {};
     
 private:
