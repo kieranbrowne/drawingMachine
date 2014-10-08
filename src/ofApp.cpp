@@ -157,21 +157,36 @@ void ofApp::updateArduino(){
         float nx;
         float ny;
 
-        cout << endl << "dx:";
-        cin >> nx;
-        cout << endl << "dy:";
-        cin >> ny;
-
-        nx += getCurrentX();
-        ny += getCurrentY();
+        int i=0;
+        ifstream file("data/invader");
+        while (file)
+        {
+            string line;
+            getline(file,line);
+            istringstream row(line);
+            int j=0;
+            while (row)
+            {
+                switch(j){
+                    case 0: if(i==count) row >> nx; j++; break;
+                    case 1: if(i==count) row >> ny; j++; break;
+                    default: break;
+                }
+                if(j==1)break;
+            }
+            if(i>=count)break;
+            i++;
+        }
 
         straightLineTo(nx,ny);
 
+        // log
         cout << "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
         << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
         << " >> " << "x:" << ofToString(nx) << " y:" << ofToString(ny);
+
+        count++;
 	}
-    count++;
 }
 
 //--------------------------------------------------------------
