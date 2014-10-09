@@ -85,7 +85,7 @@ void ofApp::movePointerTo(float newX, float newY){
         motorA.sendDigital(dirPin, ARD_LOW); // CCW
     }
 
-    for(int i=0; i<=abs(changeA); i++){
+    for(int i=0; i<abs(changeA); i++){
         motorA.sendDigital(stepPin,ARD_HIGH);
         ofSleepMillis(3);
         motorA.sendDigital(stepPin,ARD_LOW);
@@ -97,7 +97,7 @@ void ofApp::movePointerTo(float newX, float newY){
     }else if(changeB < 0){
         motorB.sendDigital(dirPin, ARD_HIGH); // CW
     }
-    for(int i=0; i<=abs(changeB); i++){
+    for(int i=0; i<abs(changeB); i++){
         motorB.sendDigital(stepPin,ARD_HIGH);
         ofSleepMillis(3);
         motorB.sendDigital(stepPin,ARD_LOW);
@@ -158,7 +158,7 @@ void ofApp::updateArduino(){
         float ny;
 
         int i=0;
-        ifstream file("data/invader");
+        ifstream file("data/data");
         while (file)
         {
             string line;
@@ -172,7 +172,7 @@ void ofApp::updateArduino(){
                     case 1: if(i==count) row >> ny; j++; break;
                     default: break;
                 }
-                if(j==1)break;
+                if(j>1)break;
             }
             if(i>=count)break;
             i++;
@@ -181,7 +181,7 @@ void ofApp::updateArduino(){
         straightLineTo(nx,ny);
 
         // log
-        cout << "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
+        cout << ofToString(count) <<": "<< "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
         << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
         << " >> " << "x:" << ofToString(nx) << " y:" << ofToString(ny);
 
