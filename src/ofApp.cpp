@@ -71,7 +71,6 @@ float ofApp::getCurrentY(){
 }
 //--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
-    ofSleepMillis(30);
 
     int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*(SPN*n));
     int newBsteps = floor(sqrt(pow(newY,2)+pow(newX-BX,2))*(SPN*n));
@@ -87,9 +86,9 @@ void ofApp::movePointerTo(float newX, float newY){
 
     for(int i=0; i<abs(changeA); i++){
         motorA.sendDigital(stepPin,ARD_HIGH);
-        ofSleepMillis(3);
+        ofSleepMillis(2);
         motorA.sendDigital(stepPin,ARD_LOW);
-        ofSleepMillis(3);
+        ofSleepMillis(2);
     }
 
     if(changeB > 0){
@@ -99,9 +98,9 @@ void ofApp::movePointerTo(float newX, float newY){
     }
     for(int i=0; i<abs(changeB); i++){
         motorB.sendDigital(stepPin,ARD_HIGH);
-        ofSleepMillis(3);
+        ofSleepMillis(2);
         motorB.sendDigital(stepPin,ARD_LOW);
-        ofSleepMillis(3);
+        ofSleepMillis(2);
     }
 
     MASteps = newAsteps;
@@ -158,7 +157,7 @@ void ofApp::updateArduino(){
         float ny;
 
         int i=0;
-        ifstream file("data/data");
+        ifstream file("data/mao");
         while (file)
         {
             string line;
