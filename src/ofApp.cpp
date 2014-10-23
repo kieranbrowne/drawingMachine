@@ -6,6 +6,8 @@ void ofApp::setup(){
     n = 8; // divisions per step
     count = 0; //instructions counter
 
+    numCoords = 0;
+
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
 
@@ -37,6 +39,7 @@ void ofApp::setup(){
 	ofAddListener(motorA.EInitialized, this, &ofApp::setMicroSteps);
 	ofAddListener(motorB.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
+    readDatatoCoords("data/data");
 }
 //--------------------------------------------------------------
 void ofApp::setMicroSteps(const int & version){
@@ -86,9 +89,9 @@ void ofApp::movePointerTo(float newX, float newY){
 
     for(int i=0; i<abs(changeA); i++){
         motorA.sendDigital(stepPin,ARD_HIGH);
-        ofSleepMillis(2);
+        ofSleepMillis(1);
         motorA.sendDigital(stepPin,ARD_LOW);
-        ofSleepMillis(2);
+        ofSleepMillis(1);
     }
 
     if(changeB > 0){
@@ -98,9 +101,9 @@ void ofApp::movePointerTo(float newX, float newY){
     }
     for(int i=0; i<abs(changeB); i++){
         motorB.sendDigital(stepPin,ARD_HIGH);
-        ofSleepMillis(2);
+        ofSleepMillis(1);
         motorB.sendDigital(stepPin,ARD_LOW);
-        ofSleepMillis(2);
+        ofSleepMillis(1);
     }
 
     MASteps = newAsteps;
@@ -138,7 +141,29 @@ void ofApp::drawing(bool d){
  //   if(d) motorA.sendServo(10,10,false);
  //   if(!d) motorA.sendServo(10,80,false);
 }
-    
+//--------------------------------------------------------------
+void ofApp::readDatatoCoords(string filepath){
+    ifstream file("data/data");
+    while (file)
+    {
+        string line;
+        getline(file,line);
+        istringstream row(line);
+        int j=0;
+        while (row)
+        {
+            switch(j){
+                case 0: row >> coord[numCoords][0]; j++; break;
+                case 1: row >> coord[numCoords][1]; j++; break;
+                default: break;
+            }
+            if(j>1)break;
+        }
+        numCoords++;
+    }
+}
+
+
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
 
@@ -156,27 +181,10 @@ void ofApp::updateArduino(){
         float nx;
         float ny;
 
-        int i=0;
-        ifstream file("data/mao");
-        while (file)
-        {
-            string line;
-            getline(file,line);
-            istringstream row(line);
-            int j=0;
-            while (row)
-            {
-                switch(j){
-                    case 0: if(i==count) row >> nx; j++; break;
-                    case 1: if(i==count) row >> ny; j++; break;
-                    default: break;
-                }
-                if(j>1)break;
-            }
-            if(i>=count)break;
-            i++;
-        }
 
+        if(count >= numCoords-1)ofExit();
+        nx = coord[count][0];
+        ny = coord[count][1];
         straightLineTo(nx,ny);
 
         // log

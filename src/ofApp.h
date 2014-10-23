@@ -35,6 +35,9 @@ public:
     int n; // step divider (as in "8" for eighth steps)
     int count;
 
+    int numCoords;
+    float coord [50000][2];
+
     float MSEP; // distance in notches between motors
     float AX; // motor co-ords
     float BX;
@@ -54,6 +57,7 @@ private:
     void movePointerTo(float newX, float newY);
     void straightLineTo(float newX, float newY);
     void updateDistGraph(int n);
+    void readDatatoCoords(string filepath);
     void drawing(bool d);
     void setMicroSteps(const int & version);
     void setupArduino(const int & version);
