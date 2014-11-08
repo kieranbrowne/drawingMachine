@@ -3,5 +3,3 @@
 *.bak
 bin/
 obj/
-Makefile
-config.make
