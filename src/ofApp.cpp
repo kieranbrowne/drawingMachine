@@ -9,15 +9,18 @@ void ofApp::setup(){
     numCoords = 0;
 
 	ofSetVerticalSync(true);
-	ofSetFrameRate(60);
+	//ofSetFrameRate(60);
 
 	ofBackground(40,40,40);
     
 	font.loadFont("franklinGothic.otf", 12);
     smallFont.loadFont("franklinGothic.otf", 10);
 
-    dirPin = 7;
-    stepPin = 6;
+    aDir = 12;
+    aStp = 13;
+    bDir = 9;
+    bStp = 8;
+
 
     MSEP = 152.0;
     AX   = 0.0;
@@ -33,19 +36,11 @@ void ofApp::setup(){
     MASteps = 1250*n; // with these settings the pointer
     MBSteps = 1250*n; // will start at x=76, y=65.
 
-	motorA.connect("/dev/ttyACM0", 57600);
-	motorB.connect("/dev/ttyACM1", 57600);
+	ard.connect("/dev/ttyACM0", 57600);
 	
-	ofAddListener(motorA.EInitialized, this, &ofApp::setMicroSteps);
-	ofAddListener(motorB.EInitialized, this, &ofApp::setupArduino);
+	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
     readDatatoCoords("data/data");
-}
-//--------------------------------------------------------------
-void ofApp::setMicroSteps(const int & version){
-    // set required stepper pins to output 
-    for(int i=6; i<=9; i++) motorA.sendDigitalPinMode(i, ARD_OUTPUT);
-    for(int i=6; i<=9; i++) motorB.sendDigitalPinMode(i, ARD_OUTPUT);
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -55,13 +50,12 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::setupArduino(const int & version) {
 	
-	ofRemoveListener(motorA.EInitialized, this, &ofApp::setMicroSteps);
-	ofRemoveListener(motorB.EInitialized, this, &ofApp::setupArduino);
+	ofRemoveListener(ard.EInitialized, this, &ofApp::setupArduino);
     
     bSetupArduino = true;
 
     // draw on/off servo
-//     motorA.sendServoAttach(10);
+//     ard.sendServoAttach(10);
 
 }
 //--------------------------------------------------------------
@@ -82,28 +76,26 @@ void ofApp::movePointerTo(float newX, float newY){
     int changeB = newBsteps - MBSteps;
 
     if(changeA > 0){
-        motorA.sendDigital(dirPin, ARD_HIGH);  // CW
+        ard.sendDigital(aDir, ARD_HIGH);  // CW
     }else if(changeA < 0){
-        motorA.sendDigital(dirPin, ARD_LOW); // CCW
+        ard.sendDigital(aDir, ARD_LOW); // CCW
     }
 
     for(int i=0; i<abs(changeA); i++){
-        motorA.sendDigital(stepPin,ARD_HIGH);
-        ofSleepMillis(1);
-        motorA.sendDigital(stepPin,ARD_LOW);
-        ofSleepMillis(1);
+        ard.sendDigital(aStp,ARD_LOW);
+        ard.sendDigital(aStp,ARD_HIGH);
+        ofSleepMillis(15);
     }
 
     if(changeB > 0){
-        motorB.sendDigital(dirPin, ARD_LOW);  // CCW
+        ard.sendDigital(bDir, ARD_LOW);  // CCW
     }else if(changeB < 0){
-        motorB.sendDigital(dirPin, ARD_HIGH); // CW
+        ard.sendDigital(bDir, ARD_HIGH); // CW
     }
     for(int i=0; i<abs(changeB); i++){
-        motorB.sendDigital(stepPin,ARD_HIGH);
-        ofSleepMillis(1);
-        motorB.sendDigital(stepPin,ARD_LOW);
-        ofSleepMillis(1);
+        ard.sendDigital(bStp,ARD_LOW);
+        ard.sendDigital(bStp,ARD_HIGH);
+        ofSleepMillis(15);
     }
 
     MASteps = newAsteps;
@@ -138,8 +130,8 @@ void ofApp::updateDistGraph(int n){
         
 //--------------------------------------------------------------
 void ofApp::drawing(bool d){
- //   if(d) motorA.sendServo(10,10,false);
- //   if(!d) motorA.sendServo(10,80,false);
+ //   if(d) ard.sendServo(10,10,false);
+ //   if(!d) ard.sendServo(10,80,false);
 }
 //--------------------------------------------------------------
 void ofApp::readDatatoCoords(string filepath){
@@ -167,15 +159,9 @@ void ofApp::readDatatoCoords(string filepath){
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
 
-	motorA.update();
-	motorB.update();
+	ard.update();
 	
 	if (bSetupArduino) {
-        // set steps to eigth    
-        motorA.sendDigital(8, ARD_HIGH);
-        motorA.sendDigital(9, ARD_HIGH);
-        motorB.sendDigital(8, ARD_HIGH);
-        motorB.sendDigital(9, ARD_HIGH);
 
         // DRAWING INSTRUCTIONS
         float nx;

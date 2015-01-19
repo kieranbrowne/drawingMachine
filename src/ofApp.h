@@ -23,13 +23,11 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	ofTrueTypeFont		font;
-    ofTrueTypeFont      smallFont;
-	ofArduino	motorA;
-    ofArduino   motorB;
-	bool		bSetupArduino;	// flag variable for setting up arduino once
-    int    dirPin;
-    int    stepPin;
+	ofTrueTypeFont	font;
+    ofTrueTypeFont  smallFont;
+	ofArduino	ard;
+	bool   bSetupArduino;	// flag variable for setting up arduino once
+    int    aDir, aStp, bDir, bStp;
     float  SPN; // steps per notch
 
     int n; // step divider (as in "8" for eighth steps)
@@ -44,9 +42,6 @@ public:
     int   MASteps; // number of steps away from motor
     int   MBSteps;
 
-    float plan[100][2] = {
-        {6,13},{6,12},{8,12}
-    };
     float distGraph[10] = {};
     
 private:
@@ -59,7 +54,6 @@ private:
     void updateDistGraph(int n);
     void readDatatoCoords(string filepath);
     void drawing(bool d);
-    void setMicroSteps(const int & version);
     void setupArduino(const int & version);
 	void updateArduino();
 };
