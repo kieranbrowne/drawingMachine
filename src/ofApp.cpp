@@ -20,6 +20,9 @@ void ofApp::setup(){
     aStp = 13;
     bDir = 9;
     bStp = 8;
+    standoff = 3;
+
+    currentDraw = false;
 
 
     MSEP = 152.0;
@@ -36,7 +39,7 @@ void ofApp::setup(){
     MASteps = 1250*n; // with these settings the pointer
     MBSteps = 1250*n; // will start at x=76, y=65.
 
-	ard.connect("/dev/ttyACM0", 57600);
+	ard.connect("/dev/ttyACM1", 57600);
 	
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
@@ -54,10 +57,25 @@ void ofApp::setupArduino(const int & version) {
     
     bSetupArduino = true;
 
+    ard.sendDigitalPinMode(aDir, ARD_OUTPUT);
+    ard.sendDigitalPinMode(aStp, ARD_OUTPUT);
+    ard.sendDigitalPinMode(bDir, ARD_OUTPUT);
+    ard.sendDigitalPinMode(bStp, ARD_OUTPUT);
     // draw on/off servo
-//     ard.sendServoAttach(10);
+//    ard.sendServoAttach(standoff);
 
+//    ard.sendDigitalPinMode(standoff, ARD_PWM);
+    ard.sendDigitalPinMode(standoff, ARD_OUTPUT);
+//    ofAddListener(ard.EDigitalPinChanged, this, &ofApp::digitalPinChanged);
+//    ofAddListener(ard.EAnalogPinChanged, this, &ofApp::analogPinChanged);
 }
+//--------------------------------------------------------------
+void ofApp::digitalPinChanged(const int & pinNum) {
+}
+//--------------------------------------------------------------
+void ofApp::analogPinChanged(const int & pinNum) {
+}
+
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
     return ((pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX)));
@@ -84,7 +102,7 @@ void ofApp::movePointerTo(float newX, float newY){
     for(int i=0; i<abs(changeA); i++){
         ard.sendDigital(aStp,ARD_LOW);
         ard.sendDigital(aStp,ARD_HIGH);
-        ofSleepMillis(15);
+        ofSleepMillis(2);
     }
 
     if(changeB > 0){
@@ -95,7 +113,7 @@ void ofApp::movePointerTo(float newX, float newY){
     for(int i=0; i<abs(changeB); i++){
         ard.sendDigital(bStp,ARD_LOW);
         ard.sendDigital(bStp,ARD_HIGH);
-        ofSleepMillis(15);
+        ofSleepMillis(2);
     }
 
     MASteps = newAsteps;
@@ -130,8 +148,17 @@ void ofApp::updateDistGraph(int n){
         
 //--------------------------------------------------------------
 void ofApp::drawing(bool d){
- //   if(d) ard.sendServo(10,10,false);
- //   if(!d) ard.sendServo(10,80,false);
+    if(d){
+        if(currentDraw != d){
+            ard.sendDigital(standoff,ARD_HIGH);
+        }
+        currentDraw = d;
+    }else if(!d){
+        if(currentDraw != d){
+            ard.sendDigital(standoff,ARD_LOW);
+        }
+        currentDraw = d;
+    }
 }
 //--------------------------------------------------------------
 void ofApp::readDatatoCoords(string filepath){
@@ -147,9 +174,10 @@ void ofApp::readDatatoCoords(string filepath){
             switch(j){
                 case 0: row >> coord[numCoords][0]; j++; break;
                 case 1: row >> coord[numCoords][1]; j++; break;
+                case 2: row >> coord[numCoords][2]; j++; break;
                 default: break;
             }
-            if(j>1)break;
+            if(j>2)break;
         }
         numCoords++;
     }
@@ -171,6 +199,7 @@ void ofApp::updateArduino(){
         if(count >= numCoords-1)ofExit();
         nx = coord[count][0];
         ny = coord[count][1];
+        drawing((bool)coord[count][2]==0);
         straightLineTo(nx,ny);
 
         // log

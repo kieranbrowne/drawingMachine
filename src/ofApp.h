@@ -27,20 +27,22 @@ public:
     ofTrueTypeFont  smallFont;
 	ofArduino	ard;
 	bool   bSetupArduino;	// flag variable for setting up arduino once
-    int    aDir, aStp, bDir, bStp;
+    int    aDir, aStp, bDir, bStp, standoff;
     float  SPN; // steps per notch
 
     int n; // step divider (as in "8" for eighth steps)
     int count;
 
     int numCoords;
-    float coord [50000][2];
+    float coord [90000][3];
 
     float MSEP; // distance in notches between motors
     float AX; // motor co-ords
     float BX;
     int   MASteps; // number of steps away from motor
     int   MBSteps;
+
+    bool currentDraw;
 
     float distGraph[10] = {};
     
@@ -55,6 +57,8 @@ private:
     void readDatatoCoords(string filepath);
     void drawing(bool d);
     void setupArduino(const int & version);
+    void digitalPinChanged(const int & pinNum);
+    void analogPinChanged(const int & pinNum);
 	void updateArduino();
 };
 
