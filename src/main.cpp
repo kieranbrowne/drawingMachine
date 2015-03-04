@@ -1,14 +1,25 @@
 #include "ofMain.h"
 #include "ofApp.h"
+#include "ofAppNoWindow.h"
 
 //========================================================================
-int main( ){
+int main(int argc, char *argv[] ){
 
-	ofSetupOpenGL(800,600, OF_WINDOW);			// <-------- setup the GL context
-
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp( new ofApp());
+    if(argc >1){
+        if(*argv[1]=='v'){
+            ofSetupOpenGL(800,600, OF_WINDOW);
+            ofRunApp( new ofApp());
+        }
+    }else if(true){
+        ofAppNoWindow window;
+        ofSetupOpenGL(&window,1024,768,OF_WINDOW);
+        ofRunApp( new ofApp());
+    }else{
+        ofApp * app = new ofApp();
+        app->setup();
+        while(1){
+            app->update();
+        }
+    }
 
 }

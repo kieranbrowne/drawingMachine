@@ -39,7 +39,7 @@ void ofApp::setup(){
     MASteps = 1250*n; // with these settings the pointer
     MBSteps = 1250*n; // will start at x=76, y=65.
 
-	ard.connect("/dev/ttyACM1", 57600);
+	ard.connect("/dev/ttyACM0", 57600);
 	
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
@@ -151,11 +151,13 @@ void ofApp::drawing(bool d){
     if(d){
         if(currentDraw != d){
             ard.sendDigital(standoff,ARD_HIGH);
+            ofSleepMillis(500);
         }
         currentDraw = d;
     }else if(!d){
         if(currentDraw != d){
             ard.sendDigital(standoff,ARD_LOW);
+            ofSleepMillis(500);
         }
         currentDraw = d;
     }

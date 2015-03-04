@@ -34,7 +34,7 @@ public:
     int count;
 
     int numCoords;
-    float coord [90000][3];
+    float coord [9000000][3];
 
     float MSEP; // distance in notches between motors
     float AX; // motor co-ords
@@ -44,7 +44,7 @@ public:
 
     bool currentDraw;
 
-    float distGraph[10] = {};
+    float distGraph[10];
     
 private:
     
