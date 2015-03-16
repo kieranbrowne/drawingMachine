@@ -1,0 +1,4 @@
+motorSpacing(mm) 200
+gearReduction 0.0625
+stepReduction 0.125
+notchesPerMetre
