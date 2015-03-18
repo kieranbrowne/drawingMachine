@@ -4,7 +4,7 @@
 void ofApp::setup(){
 
     // read machine.config file
-    ifstream fin("machine.config");
+    ifstream fin("../hardware/machine.config");
     char num; string name; float value;
     while (fin >> num >> name >> value)
     {
@@ -44,6 +44,7 @@ void ofApp::setup(){
 
     AX  = 0.0;
     BX  = AX+(m.ms/m.bp);
+    cout << "dist between motors: " << BX << endl;
     ofSleepMillis(3000);
 
     SPN = m.spr/m.sr/m.gr/m.npr;
@@ -54,7 +55,7 @@ void ofApp::setup(){
 	
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
-    readDatatoCoords("bin/data/data");
+    readDatatoCoords("data/data");
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -159,7 +160,7 @@ void ofApp::drawing(bool d){
 }
 //--------------------------------------------------------------
 void ofApp::readDatatoCoords(string filepath){
-    ifstream file("bin/data/data");
+    ifstream file("data/data");
     while (file)
     {
         string line;

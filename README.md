@@ -7,7 +7,7 @@ The system can be seen in action [here.](http://youtu.be/ItNGdXCSbFE)
 - Two EasyDriver Stepper Motor Drivers
 - Two 57BYGH420 unipolar stepper motors
 - One HD-1600A micro servo
-The basic setup for the system can seen in the ```isometricSchematic.ai``` file.
+The basic setup for the system can seen in ```hardware/isometricSchematic.ai```
 
 ###Software
 The arduino serial address in `ofApp::setup()` (see below) may vary system-to-system.
@@ -19,4 +19,7 @@ A list of connected serial devices can be accesses via the terminal:
 - OSX: `ls /dev/tty.*`
 
 ###Setup
-Make a copy of ```machine.config.template``` named ```machine.config``` and edit the values to match the perticular context
+1. In the ```harware``` directory, make a copy of ```machine.config.template``` named ```machine.config``` and edit the values to match the perticular context.
+2. Place ```data``` file in the ```bin/data/``` directory.
+3. Run ```make``` to compile.
+4. Run ```make run``` to run the code ~or~ ```cd bin``` then ```./drawingMachine v``` to run with visual debugging enabled.
