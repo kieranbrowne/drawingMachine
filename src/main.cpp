@@ -5,21 +5,18 @@
 //========================================================================
 int main(int argc, char *argv[] ){
 
-    if(argc >1){
-        if(*argv[1]=='v'){
-            ofSetupOpenGL(800,600, OF_WINDOW);
-            ofRunApp( new ofApp());
-        }
-    }else if(true){
-        ofAppNoWindow window;
-        ofSetupOpenGL(&window,1024,768,OF_WINDOW);
-        ofRunApp( new ofApp());
+    bool visual = false;
+    if(argc>1) if(*argv[1]=='v') visual = true;
+
+    // setup window
+    if(visual){
+        ofSetupOpenGL(800,600, OF_WINDOW);
     }else{
-        ofApp * app = new ofApp();
-        app->setup();
-        while(1){
-            app->update();
-        }
-    }
+        ofAppNoWindow window;
+        ofSetupOpenGL(&window,1024,768,OF_WINDOW);}
+    ofApp *app = new ofApp();
+    app->visual = visual;
+    ofRunApp( app );
+ 
 
 }

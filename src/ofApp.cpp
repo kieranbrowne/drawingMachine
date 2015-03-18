@@ -3,53 +3,63 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    n = 8; // divisions per step
+    // read machine.config file
+    ifstream fin("machine.config");
+    char num; string name; float value;
+    while (fin >> num >> name >> value)
+    {
+       switch (num)
+       {
+           case '1': m.ms  = (float) value; break;
+           case '2': m.bp  = (float) value; break;
+           case '3': m.gr  = (float) value; break;
+           case '4': m.sr  = (float) value; break;
+           case '5': m.spr = (int) value; break;
+           case '6': m.npr = (int) value; break;
+           case '7': m.in  = (int) value; break;
+           default: cout << "ERROR: config value " << name << " missing." << endl;
+                    ofSleepMillis(2000); break;
+       }
+    }
+
     count = 0; //instructions counter
 
     numCoords = 0;
 
-	ofSetVerticalSync(true);
-	//ofSetFrameRate(60);
+    if(visual){
+        ofSetVerticalSync(true);
+        ofBackground(40,40,40);
+        font.loadFont("franklinGothic.otf", 12);
+        smallFont.loadFont("franklinGothic.otf", 10);
+    }
 
-	ofBackground(40,40,40);
-    
-	font.loadFont("franklinGothic.otf", 12);
-    smallFont.loadFont("franklinGothic.otf", 10);
-
+    //arduino pins
     aDir = 12;
     aStp = 13;
     bDir = 9;
     bStp = 8;
     standoff = 3;
 
-    currentDraw = false;
+    currentDraw = true;
 
+    AX  = 0.0;
+    BX  = AX+(m.ms/m.bp);
+    ofSleepMillis(3000);
 
-    MSEP = 152.0;
-    AX   = 0.0;
-    BX   = AX+MSEP;
-
-    SPN = 12.5;
-    /* N.B. 
-     * each step is 0.225 degrees
-     * there are 1600 steps to a full motor rotation
-     * each motor is 100 notches from the pen at the start
-     * there are 100 steps to a full notch turn
-     */
-    MASteps = 1250*n; // with these settings the pointer
-    MBSteps = 1250*n; // will start at x=76, y=65.
+    SPN = m.spr/m.sr/m.gr/m.npr;
+    MASteps = m.in*SPN; 
+    MBSteps = m.in*SPN; 
 
 	ard.connect("/dev/ttyACM0", 57600);
 	
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
-    readDatatoCoords("data/data");
+    readDatatoCoords("bin/data/data");
 }
 //--------------------------------------------------------------
 void ofApp::update(){
 	updateArduino();
 }
-
 //--------------------------------------------------------------
 void ofApp::setupArduino(const int & version) {
 	
@@ -62,33 +72,21 @@ void ofApp::setupArduino(const int & version) {
     ard.sendDigitalPinMode(bDir, ARD_OUTPUT);
     ard.sendDigitalPinMode(bStp, ARD_OUTPUT);
     // draw on/off servo
-//    ard.sendServoAttach(standoff);
-
-//    ard.sendDigitalPinMode(standoff, ARD_PWM);
     ard.sendDigitalPinMode(standoff, ARD_OUTPUT);
-//    ofAddListener(ard.EDigitalPinChanged, this, &ofApp::digitalPinChanged);
-//    ofAddListener(ard.EAnalogPinChanged, this, &ofApp::analogPinChanged);
 }
-//--------------------------------------------------------------
-void ofApp::digitalPinChanged(const int & pinNum) {
-}
-//--------------------------------------------------------------
-void ofApp::analogPinChanged(const int & pinNum) {
-}
-
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
-    return ((pow((MASteps)/(SPN*n),2)-pow((MBSteps)/(SPN*n),2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX)));
+    return ((pow(MASteps/SPN,2)-pow(MBSteps/SPN,2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX)));
 }
 //--------------------------------------------------------------
 float ofApp::getCurrentY(){
-    return sqrt(pow(MASteps/(SPN*n),2)-pow(getCurrentX()-AX,2));
+    return (sqrt(pow(MASteps/SPN,2)-pow(getCurrentX()-AX,2)));
 }
 //--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
 
-    int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*(SPN*n));
-    int newBsteps = floor(sqrt(pow(newY,2)+pow(newX-BX,2))*(SPN*n));
+    int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*SPN);
+    int newBsteps = floor(sqrt(pow(newY,2)+pow(newX-BX,2))*SPN);
     
     int changeA = newAsteps - MASteps;
     int changeB = newBsteps - MBSteps;
@@ -120,7 +118,6 @@ void ofApp::movePointerTo(float newX, float newY){
     MBSteps = newBsteps;
 
 }
-
 //--------------------------------------------------------------
 void ofApp::straightLineTo(float newX, float newY){
     ofVec2f start(getCurrentX(),getCurrentY());
@@ -137,7 +134,6 @@ void ofApp::straightLineTo(float newX, float newY){
         pos.set(start.x,start.y);
     }
 }
-
 //--------------------------------------------------------------
 void ofApp::updateDistGraph(int n){
     for(int i=10;i>0;i--){
@@ -145,7 +141,6 @@ void ofApp::updateDistGraph(int n){
     }
     distGraph[0] = n;
 }
-        
 //--------------------------------------------------------------
 void ofApp::drawing(bool d){
     if(d){
@@ -164,7 +159,7 @@ void ofApp::drawing(bool d){
 }
 //--------------------------------------------------------------
 void ofApp::readDatatoCoords(string filepath){
-    ifstream file("data/data");
+    ifstream file("bin/data/data");
     while (file)
     {
         string line;
@@ -184,8 +179,6 @@ void ofApp::readDatatoCoords(string filepath){
         numCoords++;
     }
 }
-
-
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
 
@@ -207,7 +200,7 @@ void ofApp::updateArduino(){
         // log
         cout << ofToString(count) <<": "<< "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
         << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
-        << " >> " << "x:" << ofToString(nx) << " y:" << ofToString(ny);
+        << " -> " << "x:" << ofToString(nx) << " y:" << ofToString(ny);
 
         count++;
 	}
@@ -215,47 +208,46 @@ void ofApp::updateArduino(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    int b = 50; // buffer
-    ofFill();
-    ofSetColor(20, 20, 20);
-    ofRect(b*2 + MSEP*2, 0,350, ofGetWindowHeight());
-    
-    ofNoFill();
-    ofSetColor(200, 200, 200);
-    ofRect(b,b,MSEP*2,400);
-    ofEllipse(b+getCurrentX()*2,b+getCurrentY()*2,10,10);
-    
-    
-	if (!bSetupArduino){
-        ofSetColor(40, 40, 40);
-	} else {
+    if(visual){
+        int boxW = 304;
+        int b = 50; // buffer
+        ofFill();
+        ofSetColor(20, 20, 20);
+        ofRect(b*2 + boxW, 0,350, ofGetWindowHeight());
+        
+        ofNoFill();
+        ofSetColor(200, 200, 200);
+        ofRect(b,b,boxW,400);
+        ofEllipse(ofMap(getCurrentX(),0,m.ms,b,boxW),ofMap(getCurrentY(),0,m.ms,b,boxW),10,10);
+        
+        
+        if (!bSetupArduino){
+            ofSetColor(40, 40, 40);
+        } else {
+            ofSetColor(164, 164, 255);
+        }
+        //Panel
+        font.drawString("Distance",b*3 + boxW , b);
+        ofBeginShape();
+        for(int i=0;i<=10;i++){
+            ofVertex(b*3 +boxW +i*25,b*2 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,30));
+        }
+        ofEndShape();
+        font.drawString("Direction",b*3 + boxW , b*3);
+        smallFont.drawString("Absolute",b*3 + boxW , b*3+15);
+        smallFont.drawString("Relative",125+ b*3 + boxW , b*3+15);
+        ofEllipse(62.5+b*3 +boxW, b*4 +15, 125,125);
+        ofEllipse(187.5+b*3 +boxW, b*4 +15, 125,125);
+       
+        //graph    
         ofSetColor(164, 164, 255);
+        smallFont.drawString(ofToString(MASteps,5,'0'), b, b-2);
+        smallFont.drawString(ofToString(MBSteps,5,'0'), 9+boxW, b-2);
+        smallFont.drawString("("+ofToString(getCurrentX(),1)+","+
+                ofToString(getCurrentY(),1)+")", b+5+getCurrentX()*2,b+getCurrentY()*2);
+        ofSetColor(255, 255, 255);
     }
-    //Panel
-    font.drawString("Distance",b*3 + MSEP*2 , b);
-    ofBeginShape();
-    for(int i=0;i<=10;i++){
-        ofVertex(b*3 +MSEP*2 +i*25,b*2 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,30));
-    }
-    ofEndShape();
-    font.drawString("Direction",b*3 + MSEP*2 , b*3);
-    smallFont.drawString("Absolute",b*3 + MSEP*2 , b*3+15);
-    smallFont.drawString("Relative",125+ b*3 + MSEP*2 , b*3+15);
-    ofEllipse(62.5+b*3 +MSEP*2, b*4 +15, 125,125);
-    ofEllipse(187.5+b*3 +MSEP*2, b*4 +15, 125,125);
-   
-    //graph    
-    ofSetColor(164, 164, 255);
-    smallFont.drawString(ofToString(MASteps,5,'0'), b, b-2);
-    smallFont.drawString(ofToString(MBSteps,5,'0'), 9+MSEP*2, b-2);
-    smallFont.drawString("("+ofToString(getCurrentX(),1)+","+
-            ofToString(getCurrentY(),1)+")", b+5+getCurrentX()*2,b+getCurrentY()*2);
-    ofSetColor(255, 255, 255);
-
-	
 }
-
 //--------------------------------------------------------------
 float ofApp::maxValueIn(float array[]){
     float x = array[0];
@@ -266,45 +258,28 @@ float ofApp::maxValueIn(float array[]){
 }
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
 }
-
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
 }

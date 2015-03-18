@@ -1,4 +1,10 @@
-motorSpacing(mm) 200
-gearReduction 0.0625
-stepReduction 0.125
-notchesPerMetre
+1 motorSpacing(mm)     760 
+2 beltPitch(mm)        5.08 
+3 gearReduction        0.0625 
+4 stepReduction        0.125
+5 stepsPerRotation     200
+6 notchesPerRotation   16
+7 initialNotches       100
+8 errorTest            0 
+
+ 

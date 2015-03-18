@@ -2,11 +2,15 @@
 
 #include "ofMain.h"
 #include "ofEvents.h"
+#include <iostream>
+#include <sstream>
 
 
 class ofApp : public ofBaseApp{
 
 public:
+
+    bool visual; 
 
 	void setup();
 	void update();
@@ -23,6 +27,7 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
+
 	ofTrueTypeFont	font;
     ofTrueTypeFont  smallFont;
 	ofArduino	ard;
@@ -30,7 +35,6 @@ public:
     int    aDir, aStp, bDir, bStp, standoff;
     float  SPN; // steps per notch
 
-    int n; // step divider (as in "8" for eighth steps)
     int count;
 
     int numCoords;
@@ -43,6 +47,17 @@ public:
     int   MBSteps;
 
     bool currentDraw;
+
+    struct machine
+    {
+        float ms,    // dist between stepper shafts (mm)
+              bp,    // belt pitch (mm)
+              gr,    // gear reduction
+              sr;    // step reduction
+        int   spr,   // steps per full stepper rotation
+              npr,   // notches per full stepper rotation
+              in;    // initial notches between pen and steppers
+    } m;
 
     float distGraph[10];
     
