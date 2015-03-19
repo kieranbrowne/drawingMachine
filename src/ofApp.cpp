@@ -23,6 +23,7 @@ void ofApp::setup(){
     }
 
     count = 0; //instructions counter
+    ofSetFrameRate(30);
 
     numCoords = 0;
 

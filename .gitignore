@@ -5,3 +5,4 @@ bin/
 obj/
 .DS_Store
 machine.config
+hardware/arduino/stdFirmataPlusServo/.build/*
