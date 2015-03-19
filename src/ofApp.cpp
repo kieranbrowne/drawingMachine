@@ -101,7 +101,7 @@ void ofApp::movePointerTo(float newX, float newY){
     for(int i=0; i<abs(changeA); i++){
         ard.sendDigital(aStp,ARD_LOW);
         ard.sendDigital(aStp,ARD_HIGH);
-        ofSleepMillis(2);
+        ofSleepMillis(1);
     }
 
     if(changeB > 0){
@@ -112,7 +112,7 @@ void ofApp::movePointerTo(float newX, float newY){
     for(int i=0; i<abs(changeB); i++){
         ard.sendDigital(bStp,ARD_LOW);
         ard.sendDigital(bStp,ARD_HIGH);
-        ofSleepMillis(2);
+        ofSleepMillis(1);
     }
 
     MASteps = newAsteps;

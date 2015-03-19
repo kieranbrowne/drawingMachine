@@ -12,6 +12,7 @@
  #include <Servo.h> 
  
 Servo myservo;
+int s = 50; // servo pos
 
 /*
   Copyright (C) 2006-2008 Hans-Christoph Steiner.  All rights reserved.
@@ -641,8 +642,8 @@ void loop()
   }
   
   if(digitalRead(3) == HIGH){
-    myservo.write(110); 
+    while(s<110) {s++; myservo.write(s);delay(3);} 
   }else if(digitalRead(3) == LOW) {
-   myservo.write(20);
+    while(s>40) {s--; myservo.write(s);delay(3);}
   } 
 }
