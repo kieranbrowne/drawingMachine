@@ -58,6 +58,7 @@ public:
               npr,   // notches per full stepper rotation
               in;    // initial notches between pen and steppers
         string sa;   // serial address
+        int   dps;   // delay per step
     } m;
 
     float distGraph[10];

@@ -6,6 +6,5 @@
 6 notchesPerRotation   16
 7 initialNotches       100
 8 serialAddress        /dev/ttyACM0
-9 errorTest            0 
+9 delayPerStep(millis) 2 
 
- 

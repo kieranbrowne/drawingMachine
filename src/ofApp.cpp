@@ -18,6 +18,7 @@ void ofApp::setup(){
            case '6': m.npr = ofToInt(value); break;
            case '7': m.in  = ofToInt(value); break;
            case '8': m.sa  = (string) value; break;
+           case '9': m.dps = ofToInt(value); break;
            default: cout << "ERROR: config value " << name << " missing." << endl;
                     ofSleepMillis(2000); break;
        }
@@ -103,7 +104,7 @@ void ofApp::movePointerTo(float newX, float newY){
     for(int i=0; i<abs(changeA); i++){
         ard.sendDigital(aStp,ARD_LOW);
         ard.sendDigital(aStp,ARD_HIGH);
-        ofSleepMillis(1);
+        ofSleepMillis(m.dps);
     }
 
     if(changeB > 0){
@@ -114,7 +115,7 @@ void ofApp::movePointerTo(float newX, float newY){
     for(int i=0; i<abs(changeB); i++){
         ard.sendDigital(bStp,ARD_LOW);
         ard.sendDigital(bStp,ARD_HIGH);
-        ofSleepMillis(1);
+        ofSleepMillis(m.dps);
     }
 
     MASteps = newAsteps;
