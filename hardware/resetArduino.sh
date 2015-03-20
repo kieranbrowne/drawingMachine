@@ -1,9 +1,11 @@
 #!/bin/bash
 clear
+address=$(cat machine.config | grep serialAddress | sed 's/\s\s*/ /g' | cut -d' ' -f3)
+echo ATTEMPTING CONNECTION WITH PORT $address
+
 cd arduino/stdFirmataPlusServo
 echo BUILDING FIRMATA
 ino build 
-clear
+
 echo UPLOADING FIRMATA
-sleep 3
-ino upload
+ino upload -p $address
