@@ -57,6 +57,7 @@ public:
         int   spr,   // steps per full stepper rotation
               npr,   // notches per full stepper rotation
               in;    // initial notches between pen and steppers
+        string sa;   // serial address
     } m;
 
     float distGraph[10];

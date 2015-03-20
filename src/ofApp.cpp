@@ -5,18 +5,19 @@ void ofApp::setup(){
 
     // read machine.config file
     ifstream fin("../hardware/machine.config");
-    char num; string name; float value;
+    char num; string name; string value;
     while (fin >> num >> name >> value)
     {
        switch (num)
        {
-           case '1': m.ms  = (float) value; break;
-           case '2': m.bp  = (float) value; break;
-           case '3': m.gr  = (float) value; break;
-           case '4': m.sr  = (float) value; break;
-           case '5': m.spr = (int) value; break;
-           case '6': m.npr = (int) value; break;
-           case '7': m.in  = (int) value; break;
+           case '1': m.ms  = ofToFloat(value); break;
+           case '2': m.bp  = ofToFloat(value); break;
+           case '3': m.gr  = ofToFloat(value); break;
+           case '4': m.sr  = ofToFloat(value); break;
+           case '5': m.spr = ofToInt(value); break;
+           case '6': m.npr = ofToInt(value); break;
+           case '7': m.in  = ofToInt(value); break;
+           case '8': m.sa  = (string) value; break;
            default: cout << "ERROR: config value " << name << " missing." << endl;
                     ofSleepMillis(2000); break;
        }
@@ -52,7 +53,7 @@ void ofApp::setup(){
     MASteps = m.in*SPN; 
     MBSteps = m.in*SPN; 
 
-	ard.connect("/dev/ttyACM0", 57600);
+	ard.connect(m.sa, 57600);
 	
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;

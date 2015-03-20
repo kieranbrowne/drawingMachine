@@ -1,6 +1,6 @@
 #DUAL-MOTOR DRAWING MACHINE
 A dual stepper motor drawing machine.
-The system can be seen in action [here.](http://youtu.be/ItNGdXCSbFE)
+The system can be seen in action [here.](https://youtu.be/FjZdq7ek0DU)
 
 ###Hardware
 - Arduino Mega 2560 R3
@@ -9,14 +9,17 @@ The system can be seen in action [here.](http://youtu.be/ItNGdXCSbFE)
 - One HD-1600A micro servo
 The basic setup for the system can seen in ```hardware/isometricSchematic.ai```
 
-###Software
-The arduino serial address in `ofApp::setup()` (see below) may vary system-to-system.
-```
-	ard.connect("/dev/ttyACM0", 57600);
-```
+###Serial
+To correctly communicate with the arduino, the serial address must be edited in ```machine.config```. By default it is set to ```/dev/ttyACM0```.
 A list of connected serial devices can be accesses via the terminal:
 - Linux: `ls /dev/ttyACM*`
 - OSX: `ls /dev/tty.*`
+
+###Software Dependencies
+- [openFrameworks 0.8.4 +](http://openframeworks.cc/download/)
+- Python 2.6 +
+- [Arduino](http://arduino.cc/en/Main/Software)
+- [Ino](https://github.com/amperka/ino)
 
 ###Setup
 1. In the ```harware``` directory, make a copy of ```machine.config.template``` named ```machine.config``` and edit the values to match the perticular context.
