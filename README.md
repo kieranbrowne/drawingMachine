@@ -21,11 +21,7 @@ A list of connected serial devices can be accesses via the terminal:
 - [Arduino](http://arduino.cc/en/Main/Software)
 - [Ino](https://github.com/amperka/ino)
 
-
-
-
-
-
+***
 
 ####Setup
 1. In the ```harware``` directory, make a copy of ```machine.config.template``` named ```machine.config``` and edit the values to match the perticular context.
