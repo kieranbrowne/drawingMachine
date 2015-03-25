@@ -1,7 +1,7 @@
 ##DUAL-MOTOR DRAWING MACHINE
 
-<img src="https://40.media.tumblr.com/1f072dc075d0fd5d0a0e924f1a19a47d/tumblr_nlpybstm5a1r0bfx2o1_500.png"
-align="left">
+<img src="https://41.media.tumblr.com/269bf3102520f8b19f56dcfaaccf9131/tumblr_nlpybstm5a1r0bfx2o1_r1_540.png"
+align="left" width="400">
 
 ####Hardware
 - Arduino Mega 2560 R3
