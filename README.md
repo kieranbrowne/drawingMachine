@@ -34,3 +34,4 @@ OSX: ```ls /dev/tty.*```
 4. ```make run``` to run the code ~or~ ```cd bin``` then ```./drawingMachine v``` to run with visual debugging enabled.
 
 This system can be seen in action [here.](https://youtu.be/FjZdq7ek0DU)
+The development of this system can be seen [here.](http://kieranbrowne.tumblr.com)
