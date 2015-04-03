@@ -59,7 +59,7 @@ void ofApp::setup(){
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
     readDatatoCoords("data/data");
-    drawing(false);
+    //drawing(false);
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -150,13 +150,13 @@ void ofApp::updateDistGraph(int n){
 void ofApp::drawing(bool d){
     if(d){
         if(currentDraw != d){
-            ard.sendDigital(standoff,ARD_HIGH);
+            ard.sendDigital(standoff,ARD_LOW);
             ofSleepMillis(500);
         }
         currentDraw = d;
     }else if(!d){
         if(currentDraw != d){
-            ard.sendDigital(standoff,ARD_LOW);
+            ard.sendDigital(standoff,ARD_HIGH);
             ofSleepMillis(500);
         }
         currentDraw = d;
@@ -199,7 +199,7 @@ void ofApp::updateArduino(){
         if(count >= numCoords-1){drawing(false);ofExit();}
         nx = coord[count][0];
         ny = coord[count][1];
-        drawing((bool)coord[count][2]==0);
+        drawing((bool)coord[count][2]==1);
         straightLineTo(nx,ny);
 
         // log
