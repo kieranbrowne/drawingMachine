@@ -59,6 +59,7 @@ void ofApp::setup(){
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
     readDatatoCoords("data/data");
+    drawing(false);
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -195,7 +196,7 @@ void ofApp::updateArduino(){
         float ny;
 
 
-        if(count >= numCoords-1)ofExit();
+        if(count >= numCoords-1){drawing(false);ofExit();}
         nx = coord[count][0];
         ny = coord[count][1];
         drawing((bool)coord[count][2]==0);
