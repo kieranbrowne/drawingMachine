@@ -150,13 +150,13 @@ void ofApp::updateDistGraph(int n){
 void ofApp::drawing(bool d){
     if(d){
         if(currentDraw != d){
-            ard.sendDigital(standoff,ARD_LOW);
+            ard.sendDigital(standoff,ARD_HIGH);
             ofSleepMillis(500);
         }
         currentDraw = d;
     }else if(!d){
         if(currentDraw != d){
-            ard.sendDigital(standoff,ARD_HIGH);
+            ard.sendDigital(standoff,ARD_LOW);
             ofSleepMillis(500);
         }
         currentDraw = d;

@@ -641,9 +641,9 @@ void loop()
     }
   }
   
-  if(digitalRead(3) == HIGH){
+  if(digitalRead(3) == LOW){
     while(s<110) {s++; myservo.write(s);delay(3);} 
-  }else if(digitalRead(3) == LOW) {
+  }else if(digitalRead(3) == HIGH) {
     while(s>40) {s--; myservo.write(s);delay(3);}
   } 
 }
