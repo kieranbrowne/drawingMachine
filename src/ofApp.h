@@ -57,8 +57,8 @@ public:
               gr,    // gear reduction
               sr;    // step reduction
         int   spr,   // steps per full stepper rotation
-              npr,   // notches per full stepper rotation
-              in;    // initial notches between pen and steppers
+              npr;   // notches per full stepper rotation
+        float bl;    // belt length (mm)
         string sa;   // serial address
         int   dps;   // delay per step
     } m;
@@ -76,6 +76,7 @@ private:
     void readDatatoCoords(string filepath);
     void readLastPos(string filepath);
     void writeLastPos(string filepath);
+    void calibrate();
     void drawing(bool d);
     void setupArduino(const int & version);
     void digitalPinChanged(const int & pinNum);

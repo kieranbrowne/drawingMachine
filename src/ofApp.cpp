@@ -16,7 +16,7 @@ void ofApp::setup(){
            case '4': m.sr  = ofToFloat(value); break;
            case '5': m.spr = ofToInt(value); break;
            case '6': m.npr = ofToInt(value); break;
-           case '7': m.in  = ofToInt(value); break;
+           case '7': m.bl  = ofToFloat(value); break;
            case '8': m.sa  = (string) value; break;
            case '9': m.dps = ofToInt(value); break;
            default: cout << "ERROR: config value " << name << " missing." << endl;
@@ -50,8 +50,8 @@ void ofApp::setup(){
     ofSleepMillis(3000);
 
     SPN = m.spr/m.sr/m.gr/m.npr;
-    MASteps = m.in*SPN; 
-    MBSteps = m.in*SPN; 
+    //MASteps = m.in*SPN; 
+    //MBSteps = m.in*SPN; 
     readLastPos(positionFile);
 
 	ard.connect(m.sa, 57600);
@@ -120,7 +120,6 @@ void ofApp::movePointerTo(float newX, float newY){
 
     MASteps = newAsteps;
     MBSteps = newBsteps;
-
 }
 //--------------------------------------------------------------
 void ofApp::straightLineTo(float newX, float newY){
@@ -194,9 +193,10 @@ void ofApp::readLastPos(string filepath){
         MBSteps = ofToInt(line);
         file.close();
         remove(filepath.c_str());
+    }else{
+        calibrate();
     }
 }
-
 //--------------------------------------------------------------
 void ofApp::writeLastPos(string filepath){
     ofstream file(filepath.c_str());
@@ -205,6 +205,12 @@ void ofApp::writeLastPos(string filepath){
         file << MBSteps << endl;
         file.close();
     }
+}
+//--------------------------------------------------------------
+void ofApp::calibrate(){
+    movePointerTo(m.ms/2,200);//turn each motor until the end of the belt
+    MASteps = (int)(m.bl/2)/m.bp;
+    MBSteps = (int)(m.bl/2)/m.bp;
 }
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
