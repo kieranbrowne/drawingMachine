@@ -4,7 +4,7 @@
 4 stepReduction        0.125
 5 stepsPerRotation     200
 6 notchesPerRotation   16
-7 beltLength(mm)       100
+7 beltLength(mm)       3000
 8 serialAddress        /dev/ttyACM0
 9 delayPerStep(millis) 2 
 
