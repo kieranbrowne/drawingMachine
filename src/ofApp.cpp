@@ -26,6 +26,7 @@ void ofApp::setup(){
 
     count = 0; //instructions counter
     ofSetFrameRate(30);
+    positionFile = "lastPos";
 
     numCoords = 0;
 
@@ -37,10 +38,8 @@ void ofApp::setup(){
     }
 
     //arduino pins
-    aDir = 12;
-    aStp = 13;
-    bDir = 9;
-    bStp = 8;
+    aDir = 12;  aStp = 13;
+    bDir = 9;   bStp = 8;
     standoff = 3;
 
     currentDraw = true;
@@ -53,13 +52,13 @@ void ofApp::setup(){
     SPN = m.spr/m.sr/m.gr/m.npr;
     MASteps = m.in*SPN; 
     MBSteps = m.in*SPN; 
+    readLastPos(positionFile);
 
 	ard.connect(m.sa, 57600);
 	
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
     readDatatoCoords("data/data");
-    //drawing(false);
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -164,7 +163,7 @@ void ofApp::drawing(bool d){
 }
 //--------------------------------------------------------------
 void ofApp::readDatatoCoords(string filepath){
-    ifstream file("data/data");
+    ifstream file(filepath.c_str());
     while (file)
     {
         string line;
@@ -185,6 +184,29 @@ void ofApp::readDatatoCoords(string filepath){
     }
 }
 //--------------------------------------------------------------
+void ofApp::readLastPos(string filepath){
+    ifstream file(filepath.c_str());
+    if (file.is_open()){
+        string line;
+        getline(file,line);
+        MASteps = ofToInt(line);
+        getline(file,line);
+        MBSteps = ofToInt(line);
+        file.close();
+        remove(filepath.c_str());
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::writeLastPos(string filepath){
+    ofstream file(filepath.c_str());
+    if (file.is_open()){
+        file << MASteps << endl;
+        file << MBSteps << endl;
+        file.close();
+    }
+}
+//--------------------------------------------------------------
 void ofApp::updateArduino(){
 
 	ard.update();
@@ -196,7 +218,7 @@ void ofApp::updateArduino(){
         float ny;
 
 
-        if(count >= numCoords-1){drawing(false);ofExit();}
+        if(count >= numCoords-1){drawing(false);writeLastPos(positionFile);ofExit();}
         nx = coord[count][0];
         ny = coord[count][1];
         drawing((bool)coord[count][2]==1);

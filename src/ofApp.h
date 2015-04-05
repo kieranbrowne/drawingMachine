@@ -45,6 +45,8 @@ public:
     float BX;
     int   MASteps; // number of steps away from motor
     int   MBSteps;
+    
+    string positionFile;
 
     bool currentDraw;
 
@@ -72,6 +74,8 @@ private:
     void straightLineTo(float newX, float newY);
     void updateDistGraph(int n);
     void readDatatoCoords(string filepath);
+    void readLastPos(string filepath);
+    void writeLastPos(string filepath);
     void drawing(bool d);
     void setupArduino(const int & version);
     void digitalPinChanged(const int & pinNum);
