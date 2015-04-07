@@ -26,7 +26,6 @@ void ofApp::setup(){
 
     count = 0; //instructions counter
     ofSetFrameRate(30);
-    positionFile = "lastPos";
 
     numCoords = 0;
 
@@ -43,6 +42,7 @@ void ofApp::setup(){
     standoff = 3;
 
     currentDraw = true;
+    
 
     AX  = 0.0;
     BX  = AX+(m.ms/m.bp);
@@ -50,15 +50,18 @@ void ofApp::setup(){
     ofSleepMillis(3000);
 
     SPN = m.spr/m.sr/m.gr/m.npr;
-    //MASteps = m.in*SPN; 
-    //MBSteps = m.in*SPN; 
-    readLastPos(positionFile);
+    MASteps = BX*SPN;
+    MBSteps = BX*SPN;
+    positionFile = "lastPos";
 
-	ard.connect(m.sa, 57600);
+
 	
+	ard.connect(m.sa, 57600);
 	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
 	bSetupArduino = false;
+
     readDatatoCoords("data/data");
+    //readLastPos(positionFile); 
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -194,6 +197,7 @@ void ofApp::readLastPos(string filepath){
         file.close();
         remove(filepath.c_str());
     }else{
+        cout << "CALIBRATING" << endl;
         calibrate();
     }
 }
@@ -208,9 +212,9 @@ void ofApp::writeLastPos(string filepath){
 }
 //--------------------------------------------------------------
 void ofApp::calibrate(){
-    movePointerTo(m.ms/2,200);//turn each motor until the end of the belt
-    MASteps = (int)(m.bl/2)/m.bp;
-    MBSteps = (int)(m.bl/2)/m.bp;
+    movePointerTo(BX/2,200);//turn each motor until the end of the belt
+    MASteps = (int)((m.bl/2)/m.bp)*SPN;
+    MBSteps = (int)((m.bl/2)/m.bp)*SPN;
 }
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
@@ -218,6 +222,7 @@ void ofApp::updateArduino(){
 	ard.update();
 	
 	if (bSetupArduino) {
+        if(count ==0) readLastPos(positionFile); 
 
         // DRAWING INSTRUCTIONS
         float nx;
