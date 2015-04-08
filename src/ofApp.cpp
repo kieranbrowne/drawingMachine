@@ -11,14 +11,14 @@ void ofApp::setup(){
        switch (num)
        {
            case '1': m.ms  = ofToFloat(value); break;
-           case '2': m.bp  = ofToFloat(value); break;
-           case '3': m.gr  = ofToFloat(value); break;
-           case '4': m.sr  = ofToFloat(value); break;
-           case '5': m.spr = ofToInt(value); break;
-           case '6': m.npr = ofToInt(value); break;
-           case '7': m.bl  = ofToFloat(value); break;
-           case '8': m.sa  = (string) value; break;
-           case '9': m.dps = ofToInt(value); break;
+           case '2': m.bl  = ofToFloat(value); break;
+           case '3': m.bp  = ofToFloat(value); break;
+           case '4': m.gr  = ofToFloat(value); break;
+           case '5': m.sr  = ofToFloat(value); break;
+           case '6': m.spr = ofToInt(value); break;
+           case '7': m.npr = ofToInt(value); break;
+           case '8': m.dps = ofToInt(value); break;
+           case '9': m.sa  = (string) value; break;
            default: cout << "ERROR: config value " << name << " missing." << endl;
                     ofSleepMillis(2000); break;
        }

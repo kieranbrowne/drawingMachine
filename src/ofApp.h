@@ -52,15 +52,15 @@ public:
 
     struct machine
     {
-        float ms,    // dist between stepper shafts (mm)
-              bp,    // belt pitch (mm)
-              gr,    // gear reduction
-              sr;    // step reduction
-        int   spr,   // steps per full stepper rotation
-              npr;   // notches per full stepper rotation
-        float bl;    // belt length (mm)
-        string sa;   // serial address
-        int   dps;   // delay per step
+        float  ms,    // dist between stepper shafts (mm)
+               bl,    // belt length (mm)
+               bp,    // belt pitch (mm)
+               gr,    // gear reduction
+               sr;    // step reduction
+        int    spr,   // steps per full stepper rotation
+               npr,   // notches per full stepper rotation
+               dps;   // delay per step
+        string sa;    // serial address
     } m;
 
     float distGraph[10];

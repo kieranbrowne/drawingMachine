@@ -1,10 +1,9 @@
 1 motorSpacing(mm)     760 
-2 beltPitch(mm)        5.08 
-3 gearReduction        0.0625 
-4 stepReduction        0.125
-5 stepsPerRotation     200
-6 notchesPerRotation   16
-7 beltLength(mm)       3000
-8 serialAddress        /dev/ttyACM0
-9 delayPerStep(millis) 2 
-
+2 beltLength(mm)       3000
+3 beltPitch(mm)        5.08 
+4 gearReduction        0.0625 
+5 stepReduction        0.125
+6 stepsPerRotation     200
+7 notchesPerRotation   16
+8 delayPerStep(millis) 2 
+9 serialAddress        /dev/ttyACM0
