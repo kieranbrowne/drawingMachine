@@ -6,4 +6,4 @@ obj/
 .DS_Store
 machine.config
 hardware/arduino/stdFirmataPlusServo/.build/*
-hardware/arduino/stdFirmataPlusServo/src/sketch.ino
+ino/
