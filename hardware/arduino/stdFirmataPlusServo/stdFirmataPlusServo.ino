@@ -651,8 +651,10 @@ void loop()
       standOff(40);
       break;
     case 2:
+      standOff(70);
       break;
     case 3:
+      standOff(10);
       break;
   }
 }

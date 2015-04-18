@@ -165,6 +165,18 @@ void ofApp::drawing(int d){
                 ofSleepMillis(500);
                 currentDraw = d;
                 break;
+            case 2:
+                ard.sendDigital(sbd1,ARD_LOW);
+                ard.sendDigital(sbd2,ARD_HIGH);
+                ofSleepMillis(500);
+                currentDraw = d;
+                break;
+            case 3:
+                ard.sendDigital(sbd1,ARD_HIGH);
+                ard.sendDigital(sbd2,ARD_HIGH);
+                ofSleepMillis(500);
+                currentDraw = d;
+                break;
             default:
                 cout << "Error setting standoff" << endl;
                 break;
