@@ -19,6 +19,7 @@ int s = 50; // servo pos
   Copyright (C) 2010-2011 Paul Stoffregen.  All rights reserved.
   Copyright (C) 2009 Shigeru Kobayashi.  All rights reserved.
   Copyright (C) 2009-2011 Jeff Hoefs.  All rights reserved.
+
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -641,9 +642,30 @@ void loop()
     }
   }
   
-  if(digitalRead(3) == LOW){
-    while(s<110) {s++; myservo.write(s);delay(3);} 
-  }else if(digitalRead(3) == HIGH) {
-    while(s>40) {s--; myservo.write(s);delay(3);}
-  } 
+    switch(drawValue()){
+        case 0:
+            while(s<110) {s++; myservo.write(s);delay(3);} 
+            break;
+        case 1:
+            while(s>40) {s--; myservo.write(s);delay(3);}
+            break;
+    }
+}
+
+int drawValue(){
+    int d,a,b;
+    a = digitalRead(3);
+    b = digitalRead(4);
+    if((a==LOW)&&(b==LOW)){
+        d = 0;
+    }else if((a==LOW)&&(b==LOW)){
+        d = 1;
+    }else if((a==HIGH)&&(b==LOW)){
+        d = 2;
+    }else if((a==HIGH)&&(b==HIGH)){
+        d = 3;
+    }else{
+        d = 0;
+    }
+    return d;
 }

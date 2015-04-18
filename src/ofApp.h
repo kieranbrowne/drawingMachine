@@ -32,7 +32,7 @@ public:
     ofTrueTypeFont  smallFont;
 	ofArduino	ard;
 	bool   bSetupArduino;	// flag variable for setting up arduino once
-    int    aDir, aStp, bDir, bStp, standoff;
+    int    aDir, aStp, bDir, bStp, sbd1, sbd2;
     float  SPN; // steps per notch
 
     int count;

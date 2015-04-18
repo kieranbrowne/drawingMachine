@@ -39,7 +39,7 @@ void ofApp::setup(){
     //arduino pins
     aDir = 12;  aStp = 13;
     bDir = 9;   bStp = 8;
-    standoff = 3;
+    sbd1 = 3;   sbd2 = 4; // standoff binary digits
 
     currentDraw = 1;
     
@@ -79,7 +79,8 @@ void ofApp::setupArduino(const int & version) {
     ard.sendDigitalPinMode(bDir, ARD_OUTPUT);
     ard.sendDigitalPinMode(bStp, ARD_OUTPUT);
     // draw on/off servo
-    ard.sendDigitalPinMode(standoff, ARD_OUTPUT);
+    ard.sendDigitalPinMode(sbd1, ARD_OUTPUT);
+    ard.sendDigitalPinMode(sbd2, ARD_OUTPUT);
 }
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
@@ -153,18 +154,21 @@ void ofApp::drawing(int d){
         switch(d)
         {
             case 0:
-                ard.sendDigital(standoff,ARD_HIGH);
+                ard.sendDigital(sbd1,ARD_LOW);
+                ard.sendDigital(sbd2,ARD_LOW);
                 ofSleepMillis(500);
+                currentDraw = d;
                 break;
             case 1:
-                ard.sendDigital(standoff,ARD_LOW);
+                ard.sendDigital(sbd1,ARD_HIGH);
+                ard.sendDigital(sbd2,ARD_LOW);
                 ofSleepMillis(500);
+                currentDraw = d;
                 break;
             default:
                 cout << "Error setting standoff" << endl;
                 break;
         }
-        currentDraw = d;
     }
 }
 //--------------------------------------------------------------
