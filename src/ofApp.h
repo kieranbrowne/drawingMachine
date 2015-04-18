@@ -48,7 +48,7 @@ public:
     
     string positionFile;
 
-    bool currentDraw;
+    int currentDraw;
 
     struct machine
     {
@@ -77,7 +77,7 @@ private:
     void readLastPos(string filepath);
     void writeLastPos(string filepath);
     void calibrate();
-    void drawing(bool d);
+    void drawing(int d);
     void setupArduino(const int & version);
     void digitalPinChanged(const int & pinNum);
     void analogPinChanged(const int & pinNum);

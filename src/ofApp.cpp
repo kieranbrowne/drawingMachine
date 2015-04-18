@@ -41,7 +41,7 @@ void ofApp::setup(){
     bDir = 9;   bStp = 8;
     standoff = 3;
 
-    currentDraw = true;
+    currentDraw = 1;
     
 
     AX  = 0.0;
@@ -148,17 +148,21 @@ void ofApp::updateDistGraph(int n){
     distGraph[0] = n;
 }
 //--------------------------------------------------------------
-void ofApp::drawing(bool d){
-    if(d){
-        if(currentDraw != d){
-            ard.sendDigital(standoff,ARD_HIGH);
-            ofSleepMillis(500);
-        }
-        currentDraw = d;
-    }else if(!d){
-        if(currentDraw != d){
-            ard.sendDigital(standoff,ARD_LOW);
-            ofSleepMillis(500);
+void ofApp::drawing(int d){
+    if(currentDraw != d){
+        switch(d)
+        {
+            case 0:
+                ard.sendDigital(standoff,ARD_HIGH);
+                ofSleepMillis(500);
+                break;
+            case 1:
+                ard.sendDigital(standoff,ARD_LOW);
+                ofSleepMillis(500);
+                break;
+            default:
+                cout << "Error setting standoff" << endl;
+                break;
         }
         currentDraw = d;
     }
@@ -232,7 +236,7 @@ void ofApp::updateArduino(){
         if(count >= numCoords-1){drawing(false);writeLastPos(positionFile);ofExit();}
         nx = coord[count][0];
         ny = coord[count][1];
-        drawing((bool)coord[count][2]==1);
+        drawing((int)coord[count][2]);
         straightLineTo(nx,ny);
 
         // log
