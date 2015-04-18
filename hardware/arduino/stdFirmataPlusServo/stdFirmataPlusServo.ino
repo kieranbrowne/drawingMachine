@@ -12,6 +12,7 @@
  #include <Servo.h> 
  
 Servo myservo;
+int myservopin = 6;
 int s = 50; // servo pos
 
 /*
@@ -599,7 +600,7 @@ void setup()
   Firmata.begin(57600);
   systemResetCallback();  // reset to default config
   
-  myservo.attach(6);
+  myservo.attach(myservopin);
 }
 
 /*==============================================================================
@@ -642,30 +643,42 @@ void loop()
     }
   }
   
-    switch(drawValue()){
-        case 0:
-            while(s<110) {s++; myservo.write(s);delay(3);} 
-            break;
-        case 1:
-            while(s>40) {s--; myservo.write(s);delay(3);}
-            break;
-    }
+  switch(drawValue()){
+    case 0:
+      standOff(110); 
+      break;
+    case 1:
+      standOff(40);
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+  }
 }
 
 int drawValue(){
-    int d,a,b;
-    a = digitalRead(3);
-    b = digitalRead(4);
-    if((a==LOW)&&(b==LOW)){
-        d = 0;
-    }else if((a==LOW)&&(b==LOW)){
-        d = 1;
-    }else if((a==HIGH)&&(b==LOW)){
-        d = 2;
-    }else if((a==HIGH)&&(b==HIGH)){
-        d = 3;
-    }else{
-        d = 0;
-    }
-    return d;
+  int d,a,b;
+  a = digitalRead(3);
+  b = digitalRead(4);
+  if((a==LOW)&&(b==LOW)){
+    d = 0;
+  }else if((a==HIGH)&&(b==LOW)){
+    d = 1;
+  }else if((a==LOW)&&(b==HIGH)){
+    d = 2;
+  }else if((a==HIGH)&&(b==HIGH)){
+    d = 3;
+  }else{
+    d = 0;
+  }
+  return d;
 }
+void standOff(int pos){
+  if(s<pos){
+    while(s!=pos) {s++; myservo.write(s);delay(6);}
+  }else if(s>pos){
+    while(s!=pos) {s--; myservo.write(s);delay(6);}  
+  }
+}
+    
