@@ -1,5 +1,5 @@
 1 motorSpacing(mm)     760 
-2 beltLength(mm)       3000
+2 beltLength(mm)       2945
 3 beltPitch(mm)        5.08 
 4 gearReduction        0.0625 
 5 stepReduction        0.125
