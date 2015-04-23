@@ -165,31 +165,27 @@ void ofApp::drawing(int d){
             case 0:
                 ard.sendDigital(sbd1,ARD_LOW);
                 ard.sendDigital(sbd2,ARD_LOW);
-                ofSleepMillis(500);
                 currentDraw = d;
                 break;
             case 1:
                 ard.sendDigital(sbd1,ARD_HIGH);
                 ard.sendDigital(sbd2,ARD_LOW);
-                ofSleepMillis(500);
                 currentDraw = d;
                 break;
             case 2:
                 ard.sendDigital(sbd1,ARD_LOW);
                 ard.sendDigital(sbd2,ARD_HIGH);
-                ofSleepMillis(500);
                 currentDraw = d;
                 break;
             case 3:
                 ard.sendDigital(sbd1,ARD_HIGH);
                 ard.sendDigital(sbd2,ARD_HIGH);
-                ofSleepMillis(500);
-                currentDraw = d;
                 break;
             default:
                 cout << "Error setting standoff" << endl;
                 break;
         }
+        ofSleepMillis(500);
     }
 }
 //--------------------------------------------------------------
@@ -241,9 +237,10 @@ void ofApp::writeLastPos(string filepath){
 }
 //--------------------------------------------------------------
 void ofApp::calibrate(){
-    movePointerTo(BX/2,200);//turn each motor until the end of the belt
-    MASteps = (int)((m.bl/2)/m.bp)*SPN;
-    MBSteps = (int)((m.bl/2)/m.bp)*SPN;
+    int maxSteps = ((m.bl/2)/m.bp)*SPN;
+
+    if(turnStepperMotor('A',maxSteps)) MASteps = maxSteps; 
+    if(turnStepperMotor('B',maxSteps)) MBSteps = maxSteps; 
 }
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
