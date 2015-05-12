@@ -90,6 +90,38 @@ float ofApp::getCurrentY(){
     return (sqrt(pow(MASteps/SPN,2)-pow(getCurrentX()-AX,2)));
 }
 //--------------------------------------------------------------
+bool ofApp::turnStepperMotor(char motor, int steps){
+    int stpPin;
+    switch (motor){
+        case 'A':
+            stpPin = aStp;
+            if(steps > 0){
+                ard.sendDigital(aDir, ARD_HIGH);  // CW
+            }else{
+                ard.sendDigital(aDir, ARD_LOW); // CCW
+            }
+            break;
+        case 'B':
+            stpPin = bStp;
+            if(steps > 0){
+                ard.sendDigital(bDir, ARD_LOW); // CCW
+            }else{
+                ard.sendDigital(bDir, ARD_HIGH);  // CW
+            }
+            break;
+        default:
+            return false;
+    }
+
+    for(int i=0; i<abs(steps); i++){
+        ard.sendDigital(stpPin,ARD_LOW);
+        ard.sendDigital(stpPin,ARD_HIGH);
+        ofSleepMillis(m.dps);
+    }
+    return true;
+}
+
+//--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
 
     int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*SPN);
@@ -98,31 +130,8 @@ void ofApp::movePointerTo(float newX, float newY){
     int changeA = newAsteps - MASteps;
     int changeB = newBsteps - MBSteps;
 
-    if(changeA > 0){
-        ard.sendDigital(aDir, ARD_HIGH);  // CW
-    }else if(changeA < 0){
-        ard.sendDigital(aDir, ARD_LOW); // CCW
-    }
-
-    for(int i=0; i<abs(changeA); i++){
-        ard.sendDigital(aStp,ARD_LOW);
-        ard.sendDigital(aStp,ARD_HIGH);
-        ofSleepMillis(m.dps);
-    }
-
-    if(changeB > 0){
-        ard.sendDigital(bDir, ARD_LOW);  // CCW
-    }else if(changeB < 0){
-        ard.sendDigital(bDir, ARD_HIGH); // CW
-    }
-    for(int i=0; i<abs(changeB); i++){
-        ard.sendDigital(bStp,ARD_LOW);
-        ard.sendDigital(bStp,ARD_HIGH);
-        ofSleepMillis(m.dps);
-    }
-
-    MASteps = newAsteps;
-    MBSteps = newBsteps;
+    if(turnStepperMotor('A',changeA)) MASteps = newAsteps;
+    if(turnStepperMotor('B',changeB)) MBSteps = newBsteps;
 }
 //--------------------------------------------------------------
 void ofApp::straightLineTo(float newX, float newY){
@@ -155,19 +164,27 @@ void ofApp::drawing(int d){
             case 0:
                 ard.sendDigital(sbd1,ARD_LOW);
                 ard.sendDigital(sbd2,ARD_LOW);
-                ofSleepMillis(500);
                 currentDraw = d;
                 break;
             case 1:
                 ard.sendDigital(sbd1,ARD_HIGH);
                 ard.sendDigital(sbd2,ARD_LOW);
-                ofSleepMillis(500);
                 currentDraw = d;
+                break;
+            case 2:
+                ard.sendDigital(sbd1,ARD_LOW);
+                ard.sendDigital(sbd2,ARD_HIGH);
+                currentDraw = d;
+                break;
+            case 3:
+                ard.sendDigital(sbd1,ARD_HIGH);
+                ard.sendDigital(sbd2,ARD_HIGH);
                 break;
             default:
                 cout << "Error setting standoff" << endl;
                 break;
         }
+        ofSleepMillis(500);
     }
 }
 //--------------------------------------------------------------
@@ -241,9 +258,10 @@ void ofApp::writeLastPos(string filepath){
 //--------------------------------------------------------------
 void ofApp::calibrate(){
     cout << "CALIBRATING" << endl;
-    movePointerTo(BX/2,200);//turn each motor until the end of the belt
-    MASteps = (int)((m.bl/2)/m.bp)*SPN;
-    MBSteps = (int)((m.bl/2)/m.bp)*SPN;
+    int maxSteps = ((m.bl/2)/m.bp)*SPN;
+
+    if(turnStepperMotor('A',maxSteps)) MASteps = maxSteps; 
+    if(turnStepperMotor('B',maxSteps)) MBSteps = maxSteps; 
 }
 //--------------------------------------------------------------
 void ofApp::updateArduino(){

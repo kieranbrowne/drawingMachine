@@ -71,6 +71,7 @@ private:
     float getCurrentX();
     float getCurrentY();
     float maxValueIn(float array[]);
+    bool turnStepperMotor(char motor, int steps);
     void movePointerTo(float newX, float newY);
     void straightLineTo(float newX, float newY);
     void updateDistGraph(int n);
