@@ -47,6 +47,7 @@ public:
     int   MBSteps;
     
     string positionFile;
+    string setNotchFile;
 
     int currentDraw;
 
@@ -74,7 +75,9 @@ private:
     void straightLineTo(float newX, float newY);
     void updateDistGraph(int n);
     void readDatatoCoords(string filepath);
-    void readLastPos(string filepath);
+    void initialiseLocation();
+    bool readSetNotch(string filepath);
+    bool readLastPos(string filepath);
     void writeLastPos(string filepath);
     void calibrate();
     void drawing(int d);

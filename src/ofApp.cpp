@@ -50,9 +50,8 @@ void ofApp::setup(){
     ofSleepMillis(3000);
 
     SPN = m.spr/m.sr/m.gr/m.npr;
-    MASteps = BX*SPN;
-    MBSteps = BX*SPN;
     positionFile = "lastPos";
+    setNotchFile = "../hardware/setNotch";
 
 
 	
@@ -194,7 +193,28 @@ void ofApp::readDatatoCoords(string filepath){
     }
 }
 //--------------------------------------------------------------
-void ofApp::readLastPos(string filepath){
+void ofApp::initialiseLocation(){
+    if(readLastPos(positionFile)){}
+    else if(readSetNotch(setNotchFile)){}
+    else calibrate(); 
+}
+//--------------------------------------------------------------
+bool ofApp::readSetNotch(string filepath){
+    ifstream file(filepath.c_str());
+    if (file.is_open()){
+        string line;
+        getline(file,line);
+        int steps = ofToInt(line)*SPN;
+        MASteps = steps;
+        MBSteps = steps;
+        file.close();
+        return true;
+    }else{
+        return false;
+    }
+}
+//--------------------------------------------------------------
+bool ofApp::readLastPos(string filepath){
     ifstream file(filepath.c_str());
     if (file.is_open()){
         string line;
@@ -204,9 +224,9 @@ void ofApp::readLastPos(string filepath){
         MBSteps = ofToInt(line);
         file.close();
         remove(filepath.c_str());
+        return true;
     }else{
-        cout << "CALIBRATING" << endl;
-        calibrate();
+        return false;
     }
 }
 //--------------------------------------------------------------
@@ -220,6 +240,7 @@ void ofApp::writeLastPos(string filepath){
 }
 //--------------------------------------------------------------
 void ofApp::calibrate(){
+    cout << "CALIBRATING" << endl;
     movePointerTo(BX/2,200);//turn each motor until the end of the belt
     MASteps = (int)((m.bl/2)/m.bp)*SPN;
     MBSteps = (int)((m.bl/2)/m.bp)*SPN;
@@ -230,7 +251,7 @@ void ofApp::updateArduino(){
 	ard.update();
 	
 	if (bSetupArduino) {
-        if(count ==0) readLastPos(positionFile); 
+        if(count ==0) initialiseLocation(); 
 
         // DRAWING INSTRUCTIONS
         float nx;
