@@ -5,33 +5,18 @@
 #include <iostream>
 #include <sstream>
 
-
 class ofApp : public ofBaseApp{
 
 public:
-
     bool visual; 
+    void setup();
+    void update();
+    void draw();
 
-	void setup();
-	void update();
-	void draw();
-
-	void keyPressed(int key);
-	void keyReleased(int key);
-
-	void mouseMoved(int x, int y );
-	void mouseDragged(int x, int y, int button);
-	void mousePressed(int x, int y, int button);
-	void mouseReleased(int x, int y, int button);
-	void windowResized(int w, int h);
-	void dragEvent(ofDragInfo dragInfo);
-	void gotMessage(ofMessage msg);
-
-
-	ofTrueTypeFont	font;
-    ofTrueTypeFont  smallFont;
-	ofArduino	ard;
-	bool   bSetupArduino;	// flag variable for setting up arduino once
+    ofTrueTypeFont font;
+    ofTrueTypeFont smallFont;	
+    ofArduino ard;
+    bool   bSetupArduino;	// flag variable for setting up arduino once
     int    aDir, aStp, bDir, bStp, sbd1, sbd2;
     float  SPN; // steps per notch
 
