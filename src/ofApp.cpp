@@ -2,7 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
     // read machine.config file
     ifstream fin("../hardware/machine.config");
     char num; string name; string value;
@@ -15,12 +14,14 @@ void ofApp::setup(){
            case '3': m.bp  = ofToFloat(value); break;
            case '4': m.gr  = ofToFloat(value); break;
            case '5': m.sr  = ofToFloat(value); break;
-           case '6': m.spr = ofToInt(value); break;
-           case '7': m.npr = ofToInt(value); break;
-           case '8': m.dps = ofToInt(value); break;
-           case '9': m.sa  = (string) value; break;
-           default: cout << "ERROR: config value " << name << " missing." << endl;
-                    ofSleepMillis(2000); break;
+           case '6': m.spr = ofToInt(value);   break;
+           case '7': m.npr = ofToInt(value);   break;
+           case '8': m.dps = ofToInt(value);   break;
+           case '9': m.sa  = (string) value;   break;
+           default : 
+               cout << "ERROR: value " << name 
+                    << " is missing." << endl;
+               ofSleepMillis(2000); break;
        }
     }
 
@@ -43,7 +44,6 @@ void ofApp::setup(){
 
     currentDraw = 1;
     
-
     AX  = 0.0;
     BX  = AX+(m.ms/m.bp);
     cout << "dist between motors: " << BX << endl;
@@ -52,25 +52,20 @@ void ofApp::setup(){
     SPN = m.spr/m.sr/m.gr/m.npr;
     positionFile = "lastPos";
     setNotchFile = "../hardware/setNotch";
-
-
 	
-	ard.connect(m.sa, 57600);
-	ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
-	bSetupArduino = false;
+    ard.connect(m.sa, 57600);
+    ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
+    bSetupArduino = false;
 
     readDatatoCoords("data/data");
-    //readLastPos(positionFile); 
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-	updateArduino();
+    updateArduino();
 }
 //--------------------------------------------------------------
 void ofApp::setupArduino(const int & version) {
-	
-	ofRemoveListener(ard.EInitialized, this, &ofApp::setupArduino);
-    
+    ofRemoveListener(ard.EInitialized, this, &ofApp::setupArduino);
     bSetupArduino = true;
 
     ard.sendDigitalPinMode(aDir, ARD_OUTPUT);
@@ -83,11 +78,18 @@ void ofApp::setupArduino(const int & version) {
 }
 //--------------------------------------------------------------
 float ofApp::getCurrentX(){
-    return ((pow(MASteps/SPN,2)-pow(MBSteps/SPN,2)-pow(AX,2)+pow(BX,2))/(2*(BX-AX)));
+    return (
+        (pow(MASteps/SPN,2)
+        -pow(MBSteps/SPN,2)
+        -pow(AX,2)+pow(BX,2))
+        /(2*(BX-AX))
+    );
 }
 //--------------------------------------------------------------
 float ofApp::getCurrentY(){
-    return (sqrt(pow(MASteps/SPN,2)-pow(getCurrentX()-AX,2)));
+    return (
+        sqrt(pow(MASteps/SPN,2)-pow(getCurrentX()-AX,2))
+    );
 }
 //--------------------------------------------------------------
 bool ofApp::turnStepperMotor(char motor, int steps){
@@ -123,7 +125,6 @@ bool ofApp::turnStepperMotor(char motor, int steps){
 
 //--------------------------------------------------------------
 void ofApp::movePointerTo(float newX, float newY){
-
     int newAsteps = floor(sqrt(pow(newY,2)+pow(newX-AX,2))*SPN);
     int newBsteps = floor(sqrt(pow(newY,2)+pow(newX-BX,2))*SPN);
     
@@ -265,35 +266,42 @@ void ofApp::calibrate(){
 }
 //--------------------------------------------------------------
 void ofApp::updateArduino(){
-
-	ard.update();
+    ard.update();
 	
-	if (bSetupArduino) {
+    if (bSetupArduino) {
         if(count ==0) initialiseLocation(); 
 
         // DRAWING INSTRUCTIONS
         float nx;
         float ny;
 
-
-        if(count >= numCoords-1){drawing(false);writeLastPos(positionFile);ofExit();}
+        if(count >= numCoords-1){
+            drawing(false);
+            writeLastPos(positionFile);
+            ofExit();
+        }
         nx = coord[count][0];
         ny = coord[count][1];
         drawing((int)coord[count][2]);
         straightLineTo(nx,ny);
 
         // log
-        cout << ofToString(count) <<": "<< "a:" << ofToString(MASteps,5,'0') <<" b:" << ofToString(MBSteps,5,'0') 
-        << " | x:" << ofToString(getCurrentX()) << " y:" << ofToString(getCurrentY()) 
-        << " -> " << "x:" << ofToString(nx) << " y:" << ofToString(ny);
+        cout << ofToString(count) << ": "
+             << "a:" << ofToString(MASteps,5,'0') 
+             <<" b:" << ofToString(MBSteps,5,'0') 
+             << " | x:" << ofToString(getCurrentX()) 
+             << " y:" << ofToString(getCurrentY()) 
+             << " -> " 
+             << "x:" << ofToString(nx) 
+             << " y:" << ofToString(ny);
 
         count++;
-	}
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    if(visual){
+    if(visual){ // will only run if program run in visual mode
         int boxW = 304;
         int b = 50; // buffer
         ofFill();
@@ -303,7 +311,8 @@ void ofApp::draw(){
         ofNoFill();
         ofSetColor(200, 200, 200);
         ofRect(b,b,boxW,400);
-        ofEllipse(ofMap(getCurrentX(),0,m.ms,b,boxW),ofMap(getCurrentY(),0,m.ms,b,boxW),10,10);
+        ofEllipse(ofMap(getCurrentX(),0,m.ms,b,boxW),
+            ofMap(getCurrentY(),0,m.ms,b,boxW),10,10);
         
         
         if (!bSetupArduino){
@@ -315,8 +324,11 @@ void ofApp::draw(){
         font.drawString("Distance",b*3 + boxW , b);
         ofBeginShape();
         for(int i=0;i<=10;i++){
-            ofVertex(b*3 +boxW +i*25,b*2 -ofMap(distGraph[i],0,maxValueIn(distGraph),0,30));
+            ofVertex(b*3 +boxW +i*25,b*2 -ofMap(distGraph[i],0,
+            maxValueIn(distGraph),0,30));
         }
+        
+        //direction
         ofEndShape();
         font.drawString("Direction",b*3 + boxW , b*3);
         smallFont.drawString("Absolute",b*3 + boxW , b*3+15);
@@ -329,7 +341,9 @@ void ofApp::draw(){
         smallFont.drawString(ofToString(MASteps,5,'0'), b, b-2);
         smallFont.drawString(ofToString(MBSteps,5,'0'), 9+boxW, b-2);
         smallFont.drawString("("+ofToString(getCurrentX(),1)+","+
-                ofToString(getCurrentY(),1)+")", b+5+getCurrentX()*2,b+getCurrentY()*2);
+            ofToString(getCurrentY(),1)+")", 
+            b+5+getCurrentX()*2,
+            b+getCurrentY()*2);
         ofSetColor(255, 255, 255);
     }
 }
