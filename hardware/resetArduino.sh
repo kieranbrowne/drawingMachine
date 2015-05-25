@@ -1,5 +1,4 @@
 #!/bin/bash
-clear
 if [ ${1:-foo} = "full" ]; then
     echo ERASING AND REBUILDING INO
     rm -r arduino/stdFirmataPlusServo/ino 
