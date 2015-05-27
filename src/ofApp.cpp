@@ -17,13 +17,24 @@ void ofApp::setup(){
            case '6': m.spr = ofToInt(value);   break;
            case '7': m.npr = ofToInt(value);   break;
            case '8': m.dps = ofToInt(value);   break;
-           case '9': m.sa  = (string) value;   break;
+           case '9': m.sn  = ofToInt(value);   break;
            default : 
                cout << "ERROR: value " << name 
                     << " is missing." << endl;
                ofSleepMillis(2000); break;
        }
     }
+
+
+    // get serial address of arduino
+    FILE* script = popen("../hardware/getArd.sh","r");
+    while(!feof(script)){
+        char buffer[128];
+        if(fgets(buffer,128,script) !=NULL)
+            serialAddress = ofToString(buffer);
+    }
+    pclose(script);
+
 
     count = 0; //instructions counter
     ofSetFrameRate(30);
@@ -51,9 +62,8 @@ void ofApp::setup(){
 
     SPN = m.spr/m.sr/m.gr/m.npr;
     positionFile = "lastPos";
-    setNotchFile = "../hardware/setNotch";
 	
-    ard.connect(m.sa, 57600);
+    ard.connect(serialAddress, 57600);
     ofAddListener(ard.EInitialized, this, &ofApp::setupArduino);
     bSetupArduino = false;
 
@@ -213,23 +223,15 @@ void ofApp::readDatatoCoords(string filepath){
 //--------------------------------------------------------------
 void ofApp::initialiseLocation(){
     if(readLastPos(positionFile)){}
-    else if(readSetNotch(setNotchFile)){}
+    else if(readSetNotch()){}
     else calibrate(); 
 }
 //--------------------------------------------------------------
-bool ofApp::readSetNotch(string filepath){
-    ifstream file(filepath.c_str());
-    if (file.is_open()){
-        string line;
-        getline(file,line);
-        int steps = ofToInt(line)*SPN;
-        MASteps = steps;
-        MBSteps = steps;
-        file.close();
-        return true;
-    }else{
-        return false;
-    }
+bool ofApp::readSetNotch(){
+    int steps = m.sn*SPN;
+    MASteps = steps;
+    MBSteps = steps;
+    return true;
 }
 //--------------------------------------------------------------
 bool ofApp::readLastPos(string filepath){

@@ -32,7 +32,7 @@ public:
     int   MBSteps;
     
     string positionFile;
-    string setNotchFile;
+    string serialAddress;
 
     int currentDraw;
 
@@ -45,8 +45,8 @@ public:
                sr;    // step reduction
         int    spr,   // steps per full stepper rotation
                npr,   // notches per full stepper rotation
-               dps;   // delay per step
-        string sa;    // serial address
+               dps,   // delay per step
+               sn;    // set notches
     } m;
 
     float distGraph[10];
@@ -62,7 +62,7 @@ private:
     void updateDistGraph(int n);
     void readDatatoCoords(string filepath);
     void initialiseLocation();
-    bool readSetNotch(string filepath);
+    bool readSetNotch();
     bool readLastPos(string filepath);
     void writeLastPos(string filepath);
     void calibrate();

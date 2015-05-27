@@ -6,4 +6,4 @@
 6 stepsPerRotation     200
 7 notchesPerRotation   16
 8 delayPerStep(millis) 2 
-9 serialAddress        /dev/ttyACM0
+9 setNotches           100
