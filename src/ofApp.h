@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 
+using namespace std;
+
 class ofApp : public ofBaseApp{
 
 public:
@@ -33,6 +35,8 @@ public:
     
     string positionFile;
     string serialAddress;
+
+    string removeSpaces(string input);
 
     int currentDraw;
 

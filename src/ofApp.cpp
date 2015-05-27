@@ -31,7 +31,8 @@ void ofApp::setup(){
     while(!feof(script)){
         char buffer[128];
         if(fgets(buffer,128,script) !=NULL)
-            serialAddress = ofToString(buffer);
+            serialAddress = removeSpaces(ofToString(buffer));
+        break;
     }
     pclose(script);
 
@@ -356,4 +357,10 @@ float ofApp::maxValueIn(float array[]){
         if(array[i]>x) x = array[i];
     }
     return x;
+}
+//--------------------------------------------------------------
+string ofApp::removeSpaces(string input){
+    input.erase(remove(input.begin(),input.end(),' '),input.end());
+    input.erase(remove(input.begin(),input.end(),'\n'),input.end());
+    return input;
 }
