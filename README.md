@@ -15,11 +15,8 @@ align="left" width="400">
 - Arduino Mega 2560 R3
 
 ####Serial
-To correctly communicate with the arduino, the serial address must be edited in ```machine.config``` By default it is set to ```/dev/ttyACM0```.
-A list of connected serial devices can be accessed via the terminal:
-
-Linux: ```ls /dev/ttyACM*```
-OSX: ```ls /dev/tty.*```
+Serial devices are automatically set using the ```getArd.sh``` script. This will only function on linux based systems.
+For OSX a list of connected serial devices can be accessed via the terminal command ```ls /dev/tty.*```
 
 ####Software Dependencies
 - [openFrameworks 0.8.4 +](http://openframeworks.cc/download/)
