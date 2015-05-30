@@ -153,7 +153,7 @@ void ofApp::straightLineTo(float newX, float newY){
     float dist = start.distance(end);
     updateDistGraph(floor(dist));
     cout << " | d:" << ofToString(dist) << endl;
-    float stepSize = 0.1/dist;
+    float stepSize = (m.sr*m.gr)/dist;
     for(float i=stepSize; i<=1; i+=stepSize){
         if(i>1) i=1;
         pos.interpolate(end, i);
