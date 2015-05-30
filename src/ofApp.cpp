@@ -142,8 +142,8 @@ void ofApp::movePointerTo(float newX, float newY){
     int changeA = newAsteps - MASteps;
     int changeB = newBsteps - MBSteps;
 
-    if(turnStepperMotor('A',changeA)) MASteps = newAsteps;
-    if(turnStepperMotor('B',changeB)) MBSteps = newBsteps;
+    if(changeA != 0) {if(turnStepperMotor('A',changeA)) MASteps = newAsteps;}
+    if(changeB != 0) {if(turnStepperMotor('B',changeB)) MBSteps = newBsteps;}
 }
 //--------------------------------------------------------------
 void ofApp::straightLineTo(float newX, float newY){
