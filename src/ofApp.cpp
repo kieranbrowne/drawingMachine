@@ -191,6 +191,7 @@ void ofApp::drawing(int d){
             case 3:
                 ard.sendDigital(sbd1,ARD_HIGH);
                 ard.sendDigital(sbd2,ARD_HIGH);
+                currentDraw = d;
                 break;
             default:
                 cout << "Error setting standoff" << endl;
