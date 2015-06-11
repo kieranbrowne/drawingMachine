@@ -4,20 +4,21 @@
 void ofApp::setup(){
     // read machine.config file
     ifstream fin("../hardware/machine.config");
-    char num; string name; string value;
+    int num; string name; string value;
     while (fin >> num >> name >> value)
     {
        switch (num)
        {
-           case '1': m.ms  = ofToFloat(value); break;
-           case '2': m.bl  = ofToFloat(value); break;
-           case '3': m.bp  = ofToFloat(value); break;
-           case '4': m.gr  = ofToFloat(value); break;
-           case '5': m.sr  = ofToFloat(value); break;
-           case '6': m.spr = ofToInt(value);   break;
-           case '7': m.npr = ofToInt(value);   break;
-           case '8': m.dps = ofToInt(value);   break;
-           case '9': m.sn  = ofToInt(value);   break;
+           case 1  : m.ms  = ofToFloat(value); break;
+           case 2  : m.bl  = ofToFloat(value); break;
+           case 3  : m.bp  = ofToFloat(value); break;
+           case 4  : m.gr  = ofToFloat(value); break;
+           case 5  : m.sr  = ofToFloat(value); break;
+           case 6  : m.spr = ofToInt(value);   break;
+           case 7  : m.npr = ofToInt(value);   break;
+           case 8  : m.dps = ofToInt(value);   break;
+           case 9  : m.dcd = ofToInt(value);   break;
+           case 10 : m.sn  = ofToInt(value);   break;
            default : 
                cout << "ERROR: value " << name 
                     << " is missing." << endl;
@@ -197,7 +198,7 @@ void ofApp::drawing(int d){
                 cout << "Error setting standoff" << endl;
                 break;
         }
-        ofSleepMillis(500);
+        ofSleepMillis(m.dcd*1000);
     }
 }
 //--------------------------------------------------------------

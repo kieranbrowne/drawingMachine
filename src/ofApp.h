@@ -50,6 +50,7 @@ public:
         int    spr,   // steps per full stepper rotation
                npr,   // notches per full stepper rotation
                dps,   // delay per step
+               dcd,   // delay per change in drawing state
                sn;    // set notches
     } m;
 
