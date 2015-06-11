@@ -178,18 +178,22 @@ void ofApp::drawing(int d){
                 ard.sendDigital(sbd1,ARD_LOW);
                 ard.sendDigital(sbd2,ARD_LOW);
                 currentDraw = d;
+                ofSleepMillis(m.dcd*1000);
                 break;
             case 1:
+                ofSleepMillis(m.dcd*1000);
                 ard.sendDigital(sbd1,ARD_HIGH);
                 ard.sendDigital(sbd2,ARD_LOW);
                 currentDraw = d;
                 break;
             case 2:
+                ofSleepMillis(m.dcd*1000);
                 ard.sendDigital(sbd1,ARD_LOW);
                 ard.sendDigital(sbd2,ARD_HIGH);
                 currentDraw = d;
                 break;
             case 3:
+                ofSleepMillis(m.dcd*1000);
                 ard.sendDigital(sbd1,ARD_HIGH);
                 ard.sendDigital(sbd2,ARD_HIGH);
                 currentDraw = d;
@@ -198,7 +202,6 @@ void ofApp::drawing(int d){
                 cout << "Error setting standoff" << endl;
                 break;
         }
-        ofSleepMillis(m.dcd*1000);
     }
 }
 //--------------------------------------------------------------
